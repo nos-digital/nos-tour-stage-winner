@@ -48,12 +48,12 @@ CREATE TABLE votes (
 
 -- General Classification standings, refreshed hourly by the cron job.
 CREATE TABLE gc_standings (
-  rank SMALLINT UNSIGNED NOT NULL,
+  `rank` SMALLINT UNSIGNED NOT NULL,
   name VARCHAR(100) NOT NULL,
   team VARCHAR(100) NOT NULL,
   result VARCHAR(20) NOT NULL,
   time_gap INT NOT NULL,
-  PRIMARY KEY (rank)
+  PRIMARY KEY (`rank`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Aggregated vote counts per (stage, rider) — the only public face of votes.

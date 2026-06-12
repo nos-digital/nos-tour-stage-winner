@@ -97,7 +97,7 @@ app.get('/api/results', cacheFor(30), async (req, res) => {
 
 app.get('/api/gc', cacheFor(300), async (req, res) => {
   const [rows] = await pool.query(
-    'SELECT rank, name, team, result, time_gap AS timeGap FROM gc_standings ORDER BY rank'
+    'SELECT `rank`, name, team, result, time_gap AS timeGap FROM gc_standings ORDER BY `rank`'
   );
   if (rows.length === 0) {
     return res.status(503).json({ error: 'GC data not yet available' });
