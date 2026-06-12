@@ -185,8 +185,8 @@ async function syncGc() {
 await waitForDatabase();
 syncRiders().catch((err) => console.error('Initial riders sync failed:', err));
 syncGc().catch((err) => console.error('Initial GC sync failed:', err));
-cron.schedule('*/5 * * * *', () => syncRiders().catch((err) => console.error('Riders sync failed:', err)));
-cron.schedule('*/5 * * * *', () => syncGc().catch((err) => console.error('GC sync failed:', err)));
+cron.schedule('0 * * * *', () => syncRiders().catch((err) => console.error('Riders sync failed:', err)));
+cron.schedule('0 * * * *', () => syncGc().catch((err) => console.error('GC sync failed:', err)));
 
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
