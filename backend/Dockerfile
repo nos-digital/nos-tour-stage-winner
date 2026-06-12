@@ -1,14 +1,12 @@
-# Express API for the Tour stage winner app.
 FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY src ./src
+COPY backend/src ./src
 
-# Run as the unprivileged node user (OWASP A05).
 USER node
 
 EXPOSE 8090
