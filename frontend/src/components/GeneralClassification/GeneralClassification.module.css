@@ -1,0 +1,103 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 10px;
+  border-bottom: 1px solid #efece4;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowLeader {
+  background: linear-gradient(90deg, var(--tdf-yellow) 0%, var(--tdf-yellow-light) 100%);
+  border: 2px solid var(--tdf-black);
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.rank {
+  flex: 0 0 24px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-style: italic;
+  text-align: center;
+  color: var(--tdf-muted);
+}
+
+.rowLeader .rank {
+  color: var(--tdf-black);
+}
+
+.rider {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team {
+  font-size: 0.78rem;
+  color: var(--tdf-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowLeader .team {
+  color: #5a5200;
+}
+
+.gap {
+  margin-left: auto;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--tdf-ink);
+  white-space: nowrap;
+}
+
+.rowLeader .gap {
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.showAll {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 9px 0;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tdf-ink);
+  background: none;
+  border: 2px solid #e6e2d8;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.1s ease, color 0.1s ease;
+}
+
+.showAll:hover {
+  border-color: var(--tdf-black);
+  color: var(--tdf-black);
+}

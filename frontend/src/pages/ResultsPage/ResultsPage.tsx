@@ -1,0 +1,123 @@
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Hero } from '../../components/Hero/Hero';
+import { Panel } from '../../components/Panel/Panel';
+import { StageBanner } from '../../components/StageBanner/StageBanner';
+import { fetchResults, getStoredVote } from '../../api';
+import { Rider, Stage, StageResult } from '../../types';
+import { LoadStatus } from '../../App';
+import styles from './ResultsPage.module.css';
+
+interface ResultsPageProps {
+  status: LoadStatus;
+  stage: Stage | null;
+}
+
+// The results endpoint is cached (max-age=30), so a just-cast vote may not be
+// in the response yet — count it locally on top of the cached numbers.
+function applyLocalVote(results: StageResult[], stageId: number, rider: Rider): StageResult[] {
+  const existing = results.find((r) => r.riderId === rider.id);
+  const merged = existing
+    ? results.map((r) => (r.riderId === rider.id ? { ...r, totalVotes: r.totalVotes + 1 } : r))
+    : [
+        ...results,
+        { stageId, riderId: rider.id, riderName: rider.name, riderTeam: rider.team, totalVotes: 1 },
+      ];
+  return merged.sort((a, b) => b.totalVotes - a.totalVotes);
+}
+
+function ResultsPage({ status, stage }: ResultsPageProps) {
+  const location = useLocation();
+  // routeVotedRider is only present on the first visit after voting — used for the +1 adjustment.
+  const routeVotedRider = (location.state as { votedRider?: Rider } | null)?.votedRider;
+  // votedRider persists via localStorage so the highlight survives refreshes and return visits.
+  const votedRider = routeVotedRider ?? (stage ? getStoredVote(stage.id) : null);
+  const [results, setResults] = useState<StageResult[] | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!stage) return;
+    fetchResults(stage.id)
+      .then((data) => {
+        setResults(routeVotedRider ? applyLocalVote(data, stage.id, routeVotedRider) : data);
+        if (routeVotedRider) {
+          window.history.replaceState({ ...window.history.state, usr: null }, '');
+        }
+      })
+      .catch(() => setError(true));
+  }, [stage, routeVotedRider]);
+
+  const totalVotes = results?.reduce((sum, r) => sum + r.totalVotes, 0) ?? 0;
+  const maxVotes = results?.[0]?.totalVotes ?? 0;
+
+  const top10 = results?.slice(0, 10) ?? [];
+  const votedResult = votedRider ? results?.find((r) => r.riderId === votedRider.id) : null;
+  const votedIntop10 = votedResult ? top10.some((r) => r.riderId === votedResult.riderId) : true;
+  const displayed = votedResult && !votedIntop10 ? [...top10, votedResult] : top10;
+
+  return (
+    <>
+      <Hero compact>
+        {stage && <StageBanner stage={stage} />}
+        <h1>
+          De keuze van <em>het publiek</em>
+        </h1>
+        {results && (
+          <p className={styles.pickConfirmation}>
+            {totalVotes === 1 ? '1 stem uitgebracht' : `${totalVotes} stemmen uitgebracht`}
+          </p>
+        )}
+      </Hero>
+      <main className={styles.results}>
+        <Link to="/" className={styles.backLink}>
+          &larr; Terug naar stemmen
+        </Link>
+        <Panel title="Meest gekozen renners">
+          {(status === 'loading' || (status === 'ready' && !results && !error)) && (
+            <p>Laden&hellip;</p>
+          )}
+          {(status === 'error' || error) && (
+            <p>De uitslag kan niet worden geladen. Probeer het later opnieuw.</p>
+          )}
+          {results && results.length === 0 && <p>Nog geen stemmen voor deze etappe.</p>}
+          {results && results.length > 0 && (
+            <ol className={styles.resultsList}>
+              {displayed.map((result) => {
+                const isVoted = result.riderId === votedRider?.id;
+                const isExtra = !votedIntop10 && result.riderId === votedResult?.riderId;
+                const rank = (results?.findIndex((r) => r.riderId === result.riderId) ?? 0) + 1;
+                const percentage = Math.round((result.totalVotes / totalVotes) * 100);
+                return (
+                  <React.Fragment key={result.riderId}>
+                    {isExtra && (
+                      <li className={styles.resultSeparator} aria-hidden="true">&middot;&middot;&middot;</li>
+                    )}
+                    <li className={isVoted ? `${styles.resultRow} ${styles.resultRowTop}` : styles.resultRow}>
+                      <span className={styles.resultRank}>{rank}</span>
+                      <span className={styles.resultInfo}>
+                        <span className={styles.resultName}>{result.riderName}</span>
+                        <span className={styles.resultTeam}>{result.riderTeam}</span>
+                        <span className={styles.resultBarTrack} aria-hidden="true">
+                          <span
+                            className={styles.resultBar}
+                            style={{ width: `${(result.totalVotes / maxVotes) * 100}%` }}
+                          />
+                        </span>
+                      </span>
+                      <span className={styles.resultVotes}>
+                        {result.totalVotes === 1 ? '1 stem' : `${result.totalVotes} stemmen`}
+                        <span className={styles.resultPercentage}>{percentage}%</span>
+                      </span>
+                    </li>
+                  </React.Fragment>
+                );
+              })}
+            </ol>
+          )}
+        </Panel>
+      </main>
+    </>
+  );
+}
+
+export { ResultsPage };

@@ -1,0 +1,49 @@
+.hero {
+  background: linear-gradient(135deg, var(--tdf-yellow-light) 0%, var(--tdf-yellow) 55%, #f2c500 100%);
+  border-bottom: 6px solid var(--tdf-black);
+  padding: 48px 16px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle diagonal speed lines */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -55deg,
+    transparent 0 90px,
+    rgba(255, 255, 255, 0.28) 90px 96px
+  );
+  pointer-events: none;
+}
+
+.compact {
+  padding: 36px 16px 48px;
+}
+
+.inner {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.inner h1 {
+  margin: 0 0 28px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--tdf-black);
+}
+
+.inner h1 em {
+  font-style: italic;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--tdf-black);
+}

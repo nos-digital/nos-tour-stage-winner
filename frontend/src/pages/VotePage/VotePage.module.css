@@ -1,0 +1,50 @@
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 960px;
+  margin: -28px auto 0;
+  padding: 0 16px 72px;
+  position: relative;
+}
+
+@media (max-width: 700px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pickConfirmation {
+  min-height: 1.5em;
+  margin: 20px 0 0;
+  font-size: 1.05rem;
+  color: var(--tdf-black);
+}
+
+.voteButton {
+  padding: 12px 26px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tdf-yellow);
+  background: var(--tdf-black);
+  border: none;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.voteButton:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.resultsLink {
+  color: var(--tdf-black);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

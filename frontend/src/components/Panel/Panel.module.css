@@ -1,0 +1,27 @@
+.panel {
+  background: #fff;
+  padding: 28px;
+  border-radius: 6px;
+  border: 1px solid #e6e2d8;
+  box-shadow: 0 10px 30px rgba(26, 26, 26, 0.1);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.accent {
+  width: 10px;
+  height: 26px;
+  background: var(--tdf-yellow);
+  border: 2px solid var(--tdf-black);
+  transform: skewX(-12deg);
+}

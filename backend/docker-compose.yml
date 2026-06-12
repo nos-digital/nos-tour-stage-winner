@@ -1,0 +1,42 @@
+services:
+  database:
+    image: mariadb:11.4
+    container_name: tour-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      # Schema + seed run automatically on first startup of an empty volume.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: tour-api
+    ports:
+      - "8090:8090"
+    environment:
+      DB_HOST: database
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      GC_API_URL: ${GC_API_URL}
+      RIDERS_API_URL: ${RIDERS_API_URL}
+      GC_API_USER: ${GC_API_USER}
+      GC_API_PASS: ${GC_API_PASS}
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  db_data:

@@ -1,0 +1,150 @@
+.results {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 72px;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tdf-black);
+  text-decoration: none;
+  border-bottom: 3px solid var(--tdf-yellow);
+}
+
+.backLink:hover {
+  border-bottom-color: var(--tdf-black);
+}
+
+.pickConfirmation {
+  min-height: 1.5em;
+  margin: 20px 0 0;
+  font-size: 1.05rem;
+  color: var(--tdf-black);
+}
+
+.resultsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultSeparator {
+  padding: 4px 0;
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  color: var(--tdf-muted);
+  border-bottom: 1px solid #efece4;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 10px;
+  border-bottom: 1px solid #efece4;
+}
+
+.resultRowTop {
+  background: linear-gradient(90deg, var(--tdf-yellow) 0%, var(--tdf-yellow-light) 100%);
+  border: 2px solid var(--tdf-black);
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.resultRank {
+  flex: 0 0 26px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-style: italic;
+  text-align: center;
+  color: var(--tdf-muted);
+}
+
+.resultRowTop .resultRank {
+  color: var(--tdf-black);
+}
+
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.resultName {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultTeam {
+  font-size: 0.8rem;
+  color: var(--tdf-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultRowTop .resultTeam {
+  color: #5a5200;
+}
+
+.resultBarTrack {
+  display: block;
+  height: 8px;
+  margin-top: 4px;
+  background: #efece4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.resultRowTop .resultBarTrack {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.resultBar {
+  display: block;
+  height: 100%;
+  background: var(--tdf-yellow);
+  border-radius: 999px;
+}
+
+.resultRowTop .resultBar {
+  background: var(--tdf-black);
+  border-right: none;
+}
+
+.resultVotes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.resultPercentage {
+  font-size: 0.95rem;
+  color: var(--tdf-muted);
+}
+
+.resultRowTop .resultPercentage {
+  color: #5a5200;
+}
