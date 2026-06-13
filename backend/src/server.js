@@ -2,13 +2,24 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import cron from 'node-cron';
-import jwt from 'jsonwebtoken';
-import { pool, waitForDatabase } from './db.js';
+import { waitForDatabase } from './db.js';
+import { startSync } from './sync.js';
+import ridersRouter from './routes/riders.js';
+import stagesRouter from './routes/stages.js';
+import resultsRouter from './routes/results.js';
+import gcRouter from './routes/gc.js';
+import votesRouter from './routes/votes.js';
+import adminRouter from './routes/admin.js';
+
+if (!process.env.JWT_SECRET || !process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+  console.error('FATAL: JWT_SECRET, ADMIN_USERNAME and ADMIN_PASSWORD must be set');
+  process.exit(1);
+}
 
 const PORT = Number(process.env.PORT ?? 8090);
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(helmet());
 app.use(
   cors({
@@ -18,173 +29,24 @@ app.use(
 );
 app.use(express.json({ limit: '1kb' }));
 
-const apiLimiter = rateLimit({
-  windowMs: 60_000,
-  limit: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-const voteLimiter = rateLimit({
-  windowMs: 60_000,
-  limit: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/', apiLimiter);
-
-// CDN/proxy cache hints: stages and riders barely change, results may lag a bit.
-const cacheFor = (seconds) => (req, res, next) => {
-  res.set('Cache-Control', `public, max-age=${seconds}, stale-while-revalidate=${seconds * 2}`);
-  next();
-};
-
-const isId = (value) => Number.isInteger(value) && value > 0;
-
-const requireAdmin = (req, res, next) => {
-  const auth = req.headers.authorization;
-  if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
-  try {
-    jwt.verify(auth.slice(7), process.env.JWT_SECRET);
-    next();
-  } catch {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-};
-
-// In-process cache for results — one DB query per stage per TTL window,
-// regardless of how many concurrent users hit the endpoint.
-const resultsCache = new Map(); // key: stageId | 'all' → { data, expiresAt }
-const RESULTS_TTL_MS = 10_000;
-
-function getCachedResults(key) {
-  const entry = resultsCache.get(key);
-  if (entry && entry.expiresAt > Date.now()) return entry.data;
-  return null;
-}
-function setCachedResults(key, data) {
-  resultsCache.set(key, { data, expiresAt: Date.now() + RESULTS_TTL_MS });
-}
+app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: true, legacyHeaders: false }));
 
 app.get('/api/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({ status: 'ok' });
 });
 
-app.get('/api/riders', cacheFor(300), async (req, res) => {
-  const [rows] = await pool.query(
-    'SELECT id, number, name, team, out_of_race AS outOfRace FROM riders ORDER BY team, number, name'
-  );
-  res.json(rows.map((r) => ({ ...r, outOfRace: Boolean(r.outOfRace) })));
-});
-
-app.get('/api/stages', cacheFor(300), async (req, res) => {
-  const [stages] = await pool.query(
-    'SELECT id, `number`, `date`, start, finish, distance_km AS distanceKm, stage_type AS stageType FROM stages ORDER BY `number`'
-  );
-  const [favorites] = await pool.query(
-    `SELECT sf.stage_id AS stageId, r.id, r.name, r.team
-     FROM stage_favorites sf
-     JOIN riders r ON r.id = sf.rider_id
-     ORDER BY sf.stage_id, sf.position`
-  );
-  res.json(
-    stages.map((stage) => ({
-      ...stage,
-      favorites: favorites
-        .filter((f) => f.stageId === stage.id)
-        .map(({ stageId, ...rider }) => rider),
-    }))
-  );
-});
-
-// Most chosen riders, optionally for one stage: /api/results?stageId=1
-app.get('/api/results', cacheFor(30), async (req, res) => {
-  let stageId = null;
-  if (req.query.stageId !== undefined) {
-    stageId = Number(req.query.stageId);
-    if (!isId(stageId)) {
-      return res.status(400).json({ error: 'stageId must be a positive integer' });
-    }
-  }
-  const cacheKey = stageId ?? 'all';
-  const cached = getCachedResults(cacheKey);
-  if (cached) return res.json(cached);
-
-  const [rows] = await pool.query(
-    `SELECT sr.stage_id AS stageId, sr.rider_id AS riderId, r.name AS riderName,
-            r.team AS riderTeam, sr.total_votes AS totalVotes
-     FROM stage_results sr
-     JOIN riders r ON r.id = sr.rider_id
-     ${stageId ? 'WHERE sr.stage_id = ?' : ''}
-     ORDER BY sr.stage_id, sr.total_votes DESC`,
-    stageId ? [stageId] : []
-  );
-  setCachedResults(cacheKey, rows);
-  res.json(rows);
-});
-
-app.get('/api/gc', cacheFor(300), async (req, res) => {
-  const [rows] = await pool.query(
-    'SELECT `rank`, name, team, result, time_gap AS timeGap FROM gc_standings ORDER BY `rank`'
-  );
-  if (rows.length === 0) {
-    return res.status(503).json({ error: 'GC data not yet available' });
-  }
-  res.json(rows);
-});
-
-app.post('/api/votes', voteLimiter, async (req, res) => {
-  const { stageId, riderId, userId } = req.body ?? {};
-  if (!isId(stageId) || !isId(riderId) || typeof userId !== 'string' || !userId.trim()) {
-    return res.status(400).json({ error: 'stageId and riderId must be positive integers, userId must be a non-empty string' });
-  }
-  await pool.execute(
-    `INSERT INTO votes (stage_id, rider_id, user_id) VALUES (?, ?, ?)
-     ON DUPLICATE KEY UPDATE rider_id = VALUES(rider_id)`,
-    [stageId, riderId, userId]
-  );
-  res.status(201).json({ ok: true });
-});
-
-const loginLimiter = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: true, legacyHeaders: false });
-
-app.post('/api/admin/login', loginLimiter, (req, res) => {
-  const { username, password } = req.body ?? {};
-  const validUser = process.env.ADMIN_USERNAME;
-  const validPass = process.env.ADMIN_PASSWORD;
-  const secret = process.env.JWT_SECRET;
-  if (!validUser || !validPass || !secret) {
-    return res.status(503).json({ error: 'Admin not configured' });
-  }
-  if (username !== validUser || password !== validPass) {
-    return res.status(401).json({ error: 'Invalid credentials' });
-  }
-  const token = jwt.sign({ role: 'admin' }, secret, { expiresIn: '8h' });
-  res.json({ token });
-});
-
-app.put('/api/admin/stages/:id/favorites', requireAdmin, async (req, res) => {
-  const stageId = Number(req.params.id);
-  if (!isId(stageId)) return res.status(400).json({ error: 'Invalid stage id' });
-  const riderIds = req.body?.riderIds;
-  if (!Array.isArray(riderIds) || riderIds.some((id) => !isId(id))) {
-    return res.status(400).json({ error: 'riderIds must be an array of positive integers' });
-  }
-  await pool.execute('DELETE FROM stage_favorites WHERE stage_id = ?', [stageId]);
-  for (let i = 0; i < riderIds.length; i++) {
-    await pool.execute(
-      'INSERT INTO stage_favorites (stage_id, rider_id, position) VALUES (?, ?, ?)',
-      [stageId, riderIds[i], i + 1]
-    );
-  }
-  res.json({ ok: true });
-});
+app.use('/api/riders', ridersRouter);
+app.use('/api/stages', stagesRouter);
+app.use('/api/results', resultsRouter);
+app.use('/api/gc', gcRouter);
+app.use('/api/votes', votesRouter);
+app.use('/api/admin', adminRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// Central error handler: map known cases, never leak internals.
 app.use((err, req, res, next) => {
   if (err.type === 'entity.parse.failed' || err.type === 'entity.too.large') {
     return res.status(400).json({ error: 'Invalid request body' });
@@ -192,64 +54,10 @@ app.use((err, req, res, next) => {
   if (err.code === 'ER_NO_REFERENCED_ROW_2') {
     return res.status(400).json({ error: 'Unknown stage or rider' });
   }
-
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-async function syncRiders() {
-  const url = process.env.RIDERS_API_URL;
-  const user = process.env.GC_API_USER;
-  const pass = process.env.GC_API_PASS;
-  if (!url || !user || !pass) {
-    console.warn('Riders sync skipped: RIDERS_API_URL not configured');
-    return;
-  }
-  const auth = Buffer.from(`${user}:${pass}`).toString('base64');
-  const upstream = await fetch(url, { headers: { Authorization: `Basic ${auth}` } });
-  if (!upstream.ok) throw new Error(`Infostrada returned ${upstream.status}`);
-  const data = await upstream.json();
-  if (!data.length) return;
-  for (const r of data) {
-    await pool.execute(
-      `INSERT INTO riders (person_id, number, name, team, out_of_race)
-       VALUES (?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE person_id = VALUES(person_id), number = VALUES(number), team = VALUES(team), out_of_race = VALUES(out_of_race)`,
-      [r.n_PersonID, r.c_ShirtNr ? parseInt(r.c_ShirtNr, 10) : null, r.c_Person, r.c_Team, r.b_OutOfRace ? 1 : 0]
-    );
-  }
-  console.log(`Riders synced: ${data.length} riders`);
-}
-
-async function syncGc() {
-  const url = process.env.GC_API_URL;
-  const user = process.env.GC_API_USER;
-  const pass = process.env.GC_API_PASS;
-  if (!url || !user || !pass) {
-    console.warn('GC sync skipped: GC_API_URL/USER/PASS not configured');
-    return;
-  }
-  const auth = Buffer.from(`${user}:${pass}`).toString('base64');
-  const upstream = await fetch(url, { headers: { Authorization: `Basic ${auth}` } });
-  if (!upstream.ok) throw new Error(`Infostrada returned ${upstream.status}`);
-  const data = await upstream.json();
-  if (!data.length) return;
-  const placeholders = data.map(() => '(?, ?, ?, ?, ?)').join(', ');
-  const values = data.flatMap((r) => [r.n_RankSort, r.c_Participant, r.c_Team, r.c_Result, r.n_TimeRel]);
-  await pool.execute('DELETE FROM gc_standings');
-  await pool.execute(
-    `INSERT INTO gc_standings (\`rank\`, name, team, result, time_gap) VALUES ${placeholders}`,
-    values
-  );
-  console.log(`GC synced: ${data.length} riders`);
-}
-
 await waitForDatabase();
-syncRiders().catch((err) => console.error('Initial riders sync failed:', err));
-syncGc().catch((err) => console.error('Initial GC sync failed:', err));
-cron.schedule('0 * * * *', () => syncRiders().catch((err) => console.error('Riders sync failed:', err)));
-cron.schedule('0 * * * *', () => syncGc().catch((err) => console.error('GC sync failed:', err)));
-
-app.listen(PORT, () => {
-  console.log(`API listening on port ${PORT}`);
-});
+startSync();
+app.listen(PORT, () => console.log(`API listening on port ${PORT}`));

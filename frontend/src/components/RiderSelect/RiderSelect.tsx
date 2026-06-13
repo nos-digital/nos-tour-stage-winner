@@ -48,7 +48,7 @@ function RiderSelect({ riders, favorites = [], selectedId, onSelect }: RiderSele
         <optgroup label="Favorieten vandaag">
           {activeFavorites.map((rider) => (
             <option key={rider.id} value={rider.id}>
-              {rider.name}
+              {rider.number ? `${rider.number}. ${rider.name}` : rider.name}
             </option>
           ))}
         </optgroup>
