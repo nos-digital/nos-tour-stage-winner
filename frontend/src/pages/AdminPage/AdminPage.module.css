@@ -1,0 +1,475 @@
+/* ── Login ── */
+.loginWrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--tdf-black);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.loginHeader {
+  background: var(--tdf-yellow);
+  padding: 28px 32px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.loginTitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+  color: var(--tdf-black);
+}
+
+.loginBadge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--tdf-black);
+  color: var(--tdf-yellow);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.loginForm {
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--tdf-black);
+}
+
+.input {
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 1rem;
+  border: 2px solid #e0ddd5;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: var(--tdf-black);
+}
+
+.loginError {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.loginButton {
+  padding: 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--tdf-black);
+  color: var(--tdf-yellow);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.loginButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ── Admin shell ── */
+.adminWrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f3ee;
+}
+
+.adminHeader {
+  background: var(--tdf-black);
+  color: var(--tdf-yellow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.adminHeaderInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adminHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.logoutButton {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: none;
+  color: var(--tdf-yellow);
+  border: 1px solid rgba(255, 217, 0, 0.4);
+  border-radius: 4px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.logoutButton:hover {
+  border-color: var(--tdf-yellow);
+}
+
+/* ── Layout ── */
+.adminBody {
+  display: flex;
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ── Stage list ── */
+.stageList {
+  width: 240px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e5de;
+  overflow: hidden;
+  align-self: flex-start;
+  position: sticky;
+  top: 80px;
+}
+
+.sidebarTitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tdf-muted);
+  padding: 14px 16px 10px;
+  margin: 0;
+  border-bottom: 1px solid #efece4;
+}
+
+.stageItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #efece4;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.stageItem:last-child {
+  border-bottom: none;
+}
+
+.stageItem:hover {
+  background: #f7f5ef;
+}
+
+.stageItemActive {
+  background: var(--tdf-yellow) !important;
+}
+
+.stageNum {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tdf-muted);
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.stageItemActive .stageNum {
+  color: var(--tdf-black);
+}
+
+.stageInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.stageFinish {
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stageDate {
+  font-size: 0.75rem;
+  color: var(--tdf-muted);
+}
+
+.stageFavCount {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--tdf-muted);
+  background: #efece4;
+  border-radius: 999px;
+  padding: 1px 7px;
+  flex-shrink: 0;
+}
+
+.stageItemActive .stageFavCount {
+  background: rgba(0,0,0,0.12);
+  color: var(--tdf-black);
+}
+
+/* ── Editor ── */
+.editor {
+  flex: 1;
+  min-width: 0;
+}
+
+.placeholder {
+  color: var(--tdf-muted);
+  padding: 40px 0;
+  font-size: 1rem;
+}
+
+.editorHeader {
+  margin-bottom: 16px;
+}
+
+.editorTitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--tdf-black);
+}
+
+/* ── Favorites list ── */
+.favoritesList {
+  background: #fff;
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.emptyState {
+  padding: 24px;
+  color: var(--tdf-muted);
+  margin: 0;
+}
+
+.favoriteRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #efece4;
+}
+
+.favoriteRow:last-child {
+  border-bottom: none;
+}
+
+.favoritePos {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--tdf-muted);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.favoriteInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.favoriteName {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.favoriteTeam {
+  font-size: 0.8rem;
+  color: var(--tdf-muted);
+}
+
+.favoriteActions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.iconButton {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #f5f3ee;
+  border: 1px solid #e0ddd5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.1s;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: #e8e5de;
+}
+
+.iconButton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.iconButtonRemove {
+  composes: iconButton;
+  color: #c0392b;
+  border-color: #f5c6c2;
+}
+
+.iconButtonRemove:hover {
+  background: #fdf0ef !important;
+}
+
+/* ── Add section ── */
+.addSection {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 2px solid var(--tdf-black);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.suggestionItem {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #efece4;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
+}
+
+.suggestionItem:hover {
+  background: #f7f5ef;
+}
+
+/* ── Save ── */
+.saveRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.saveButton {
+  padding: 12px 32px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--tdf-black);
+  color: var(--tdf-yellow);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.saveSuccess {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.saveError {
+  color: #c0392b;
+  font-weight: 600;
+}

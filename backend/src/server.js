@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import cron from 'node-cron';
+import jwt from 'jsonwebtoken';
 import { pool, waitForDatabase } from './db.js';
 
 const PORT = Number(process.env.PORT ?? 8090);
@@ -12,7 +13,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(','),
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT'],
   })
 );
 app.use(express.json({ limit: '1kb' }));
@@ -38,6 +39,31 @@ const cacheFor = (seconds) => (req, res, next) => {
 };
 
 const isId = (value) => Number.isInteger(value) && value > 0;
+
+const requireAdmin = (req, res, next) => {
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+};
+
+// In-process cache for results — one DB query per stage per TTL window,
+// regardless of how many concurrent users hit the endpoint.
+const resultsCache = new Map(); // key: stageId | 'all' → { data, expiresAt }
+const RESULTS_TTL_MS = 10_000;
+
+function getCachedResults(key) {
+  const entry = resultsCache.get(key);
+  if (entry && entry.expiresAt > Date.now()) return entry.data;
+  return null;
+}
+function setCachedResults(key, data) {
+  resultsCache.set(key, { data, expiresAt: Date.now() + RESULTS_TTL_MS });
+}
 
 app.get('/api/health', (req, res) => {
   res.set('Cache-Control', 'no-store');
@@ -73,25 +99,27 @@ app.get('/api/stages', cacheFor(300), async (req, res) => {
 
 // Most chosen riders, optionally for one stage: /api/results?stageId=1
 app.get('/api/results', cacheFor(30), async (req, res) => {
-  const filters = [];
-  const params = [];
+  let stageId = null;
   if (req.query.stageId !== undefined) {
-    const stageId = Number(req.query.stageId);
+    stageId = Number(req.query.stageId);
     if (!isId(stageId)) {
       return res.status(400).json({ error: 'stageId must be a positive integer' });
     }
-    filters.push('sr.stage_id = ?');
-    params.push(stageId);
   }
+  const cacheKey = stageId ?? 'all';
+  const cached = getCachedResults(cacheKey);
+  if (cached) return res.json(cached);
+
   const [rows] = await pool.query(
     `SELECT sr.stage_id AS stageId, sr.rider_id AS riderId, r.name AS riderName,
             r.team AS riderTeam, sr.total_votes AS totalVotes
      FROM stage_results sr
      JOIN riders r ON r.id = sr.rider_id
-     ${filters.length ? `WHERE ${filters.join(' AND ')}` : ''}
+     ${stageId ? 'WHERE sr.stage_id = ?' : ''}
      ORDER BY sr.stage_id, sr.total_votes DESC`,
-    params
+    stageId ? [stageId] : []
   );
+  setCachedResults(cacheKey, rows);
   res.json(rows);
 });
 
@@ -116,6 +144,40 @@ app.post('/api/votes', voteLimiter, async (req, res) => {
     [stageId, riderId, userId]
   );
   res.status(201).json({ ok: true });
+});
+
+const loginLimiter = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: true, legacyHeaders: false });
+
+app.post('/api/admin/login', loginLimiter, (req, res) => {
+  const { username, password } = req.body ?? {};
+  const validUser = process.env.ADMIN_USERNAME;
+  const validPass = process.env.ADMIN_PASSWORD;
+  const secret = process.env.JWT_SECRET;
+  if (!validUser || !validPass || !secret) {
+    return res.status(503).json({ error: 'Admin not configured' });
+  }
+  if (username !== validUser || password !== validPass) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  const token = jwt.sign({ role: 'admin' }, secret, { expiresIn: '8h' });
+  res.json({ token });
+});
+
+app.put('/api/admin/stages/:id/favorites', requireAdmin, async (req, res) => {
+  const stageId = Number(req.params.id);
+  if (!isId(stageId)) return res.status(400).json({ error: 'Invalid stage id' });
+  const riderIds = req.body?.riderIds;
+  if (!Array.isArray(riderIds) || riderIds.some((id) => !isId(id))) {
+    return res.status(400).json({ error: 'riderIds must be an array of positive integers' });
+  }
+  await pool.execute('DELETE FROM stage_favorites WHERE stage_id = ?', [stageId]);
+  for (let i = 0; i < riderIds.length; i++) {
+    await pool.execute(
+      'INSERT INTO stage_favorites (stage_id, rider_id, position) VALUES (?, ?, ?)',
+      [stageId, riderIds[i], i + 1]
+    );
+  }
+  res.json({ ok: true });
 });
 
 app.use((req, res) => {

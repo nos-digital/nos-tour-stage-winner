@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { VotePage } from './pages/VotePage/VotePage';
 import { ResultsPage } from './pages/ResultsPage/ResultsPage';
+import { AdminPage } from './pages/AdminPage/AdminPage';
 import { fetchRiders, fetchStages, getActiveStage, todayYMD } from './api';
 import { Rider, Stage } from './types';
 
@@ -29,6 +30,7 @@ function App() {
         <Routes>
           <Route path="/" element={<VotePage status={status} riders={riders} stage={stage} />} />
           <Route path="/uitslag" element={<ResultsPage status={status} stage={stage} />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </div>
     </BrowserRouter>

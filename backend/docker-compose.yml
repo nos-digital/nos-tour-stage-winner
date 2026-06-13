@@ -19,7 +19,9 @@ services:
     restart: unless-stopped
 
   api:
-    build: .
+    build:
+      context: ../
+      dockerfile: backend/Dockerfile
     container_name: tour-api
     ports:
       - "8090:8090"
@@ -33,6 +35,9 @@ services:
       RIDERS_API_URL: ${RIDERS_API_URL}
       GC_API_USER: ${GC_API_USER}
       GC_API_PASS: ${GC_API_PASS}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       database:
         condition: service_healthy

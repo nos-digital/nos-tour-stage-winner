@@ -13,24 +13,9 @@ interface ResultsPageProps {
   stage: Stage | null;
 }
 
-// The results endpoint is cached (max-age=30), so a just-cast vote may not be
-// in the response yet — count it locally on top of the cached numbers.
-function applyLocalVote(results: StageResult[], stageId: number, rider: Rider): StageResult[] {
-  const existing = results.find((r) => r.riderId === rider.id);
-  const merged = existing
-    ? results.map((r) => (r.riderId === rider.id ? { ...r, totalVotes: r.totalVotes + 1 } : r))
-    : [
-        ...results,
-        { stageId, riderId: rider.id, riderName: rider.name, riderTeam: rider.team, totalVotes: 1 },
-      ];
-  return merged.sort((a, b) => b.totalVotes - a.totalVotes);
-}
-
 function ResultsPage({ status, stage }: ResultsPageProps) {
   const location = useLocation();
-  // routeVotedRider is only present on the first visit after voting — used for the +1 adjustment.
   const routeVotedRider = (location.state as { votedRider?: Rider } | null)?.votedRider;
-  // votedRider persists via localStorage so the highlight survives refreshes and return visits.
   const votedRider = routeVotedRider ?? (stage ? getStoredVote(stage.id) : null);
   const [results, setResults] = useState<StageResult[] | null>(null);
   const [error, setError] = useState(false);
@@ -38,22 +23,17 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
   useEffect(() => {
     if (!stage) return;
     fetchResults(stage.id)
-      .then((data) => {
-        setResults(routeVotedRider ? applyLocalVote(data, stage.id, routeVotedRider) : data);
-        if (routeVotedRider) {
-          window.history.replaceState({ ...window.history.state, usr: null }, '');
-        }
-      })
+      .then(setResults)
       .catch(() => setError(true));
-  }, [stage, routeVotedRider]);
+  }, [stage?.id]);
 
   const totalVotes = results?.reduce((sum, r) => sum + r.totalVotes, 0) ?? 0;
   const maxVotes = results?.[0]?.totalVotes ?? 0;
 
   const top10 = results?.slice(0, 10) ?? [];
   const votedResult = votedRider ? results?.find((r) => r.riderId === votedRider.id) : null;
-  const votedIntop10 = votedResult ? top10.some((r) => r.riderId === votedResult.riderId) : true;
-  const displayed = votedResult && !votedIntop10 ? [...top10, votedResult] : top10;
+  const votedInTop10 = votedResult ? top10.some((r) => r.riderId === votedResult.riderId) : true;
+  const displayed = votedResult && !votedInTop10 ? [...top10, votedResult] : top10;
 
   return (
     <>
@@ -84,8 +64,8 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
             <ol className={styles.resultsList}>
               {displayed.map((result) => {
                 const isVoted = result.riderId === votedRider?.id;
-                const isExtra = !votedIntop10 && result.riderId === votedResult?.riderId;
-                const rank = (results?.findIndex((r) => r.riderId === result.riderId) ?? 0) + 1;
+                const isExtra = !votedInTop10 && result.riderId === votedResult?.riderId;
+                const rank = (results.findIndex((r) => r.riderId === result.riderId) ?? 0) + 1;
                 const percentage = Math.round((result.totalVotes / totalVotes) * 100);
                 return (
                   <React.Fragment key={result.riderId}>
