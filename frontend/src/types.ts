@@ -1,5 +1,6 @@
 export interface Rider {
   id: number;
+  number?: number;
   name: string;
   team: string;
   outOfRace?: boolean;

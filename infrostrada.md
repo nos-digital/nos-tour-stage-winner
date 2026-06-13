@@ -1,5 +1,8 @@
 Infostrada api login staat in lastpass
 
+Docs
+http://nos.api.infostradasports.com/ > Cyclcing
+
 Get race list
 http://nos.api.infostradasports.com/svc/Cycling.svc/json/GetRaceList?season=2026&languageCode=1
 

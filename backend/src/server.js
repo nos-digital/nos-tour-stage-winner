@@ -72,7 +72,7 @@ app.get('/api/health', (req, res) => {
 
 app.get('/api/riders', cacheFor(300), async (req, res) => {
   const [rows] = await pool.query(
-    'SELECT id, name, team, out_of_race AS outOfRace FROM riders ORDER BY name'
+    'SELECT id, number, name, team, out_of_race AS outOfRace FROM riders ORDER BY team, number, name'
   );
   res.json(rows.map((r) => ({ ...r, outOfRace: Boolean(r.outOfRace) })));
 });
@@ -212,10 +212,10 @@ async function syncRiders() {
   if (!data.length) return;
   for (const r of data) {
     await pool.execute(
-      `INSERT INTO riders (person_id, name, team, out_of_race)
-       VALUES (?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE person_id = VALUES(person_id), team = VALUES(team), out_of_race = VALUES(out_of_race)`,
-      [r.n_PersonID, r.c_Person, r.c_Team, r.b_OutOfRace ? 1 : 0]
+      `INSERT INTO riders (person_id, number, name, team, out_of_race)
+       VALUES (?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE person_id = VALUES(person_id), number = VALUES(number), team = VALUES(team), out_of_race = VALUES(out_of_race)`,
+      [r.n_PersonID, r.c_ShirtNr ? parseInt(r.c_ShirtNr, 10) : null, r.c_Person, r.c_Team, r.b_OutOfRace ? 1 : 0]
     );
   }
   console.log(`Riders synced: ${data.length} riders`);
