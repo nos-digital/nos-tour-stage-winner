@@ -80,7 +80,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 26);
 
   // ── Stage badge
-  const stageLabel = `ETAPPE ${stage.number}  ·  ${stage.start} → ${stage.finish}`;
+  const stageLabel = `Etappe ${stage.number}  ·  ${stage.start} → ${stage.finish}`;
   ctx.font = `700 16px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const labelW = Math.min(ctx.measureText(stageLabel).width, W - M * 2);
   const bPad = 13, bH = 27, bY = BAR_TOP + 34;
@@ -97,11 +97,11 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   // ── Rider name: auto-fit to card width
   const maxNameW = W - M * 2;
   const nameText = rider.name;
-  ctx.font = `italic 800 66px "EffraBold", Impact, Arial, sans-serif`;
+  ctx.font = `italic 800 66px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const rawW = ctx.measureText(nameText).width;
   if (rawW > maxNameW) {
     const fitted = Math.floor(66 * (maxNameW / rawW));
-    ctx.font = `italic 800 ${fitted}px "EffraBold", Impact, Arial, sans-serif`;
+    ctx.font = `italic 800 ${fitted}px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   }
   ctx.fillStyle = '#1a1a1a';
   ctx.fillText(nameText, M, 265);

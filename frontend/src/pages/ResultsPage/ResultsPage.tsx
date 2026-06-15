@@ -41,7 +41,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
       <Hero >
         {stage && <StageBanner stage={stage} />}
         <h1>
-          De keuze van <em>het publiek</em>
+          De keuze van het publiek
         </h1>
         {results && (
           <p className={styles.pickConfirmation}>

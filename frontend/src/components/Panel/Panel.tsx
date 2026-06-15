@@ -10,7 +10,6 @@ function Panel({ title, children }: PanelProps) {
   return (
     <section className={styles.panel}>
       <h2 className={styles.title}>
-        <span className={styles.accent} aria-hidden="true" />
         {title}
       </h2>
       {children}
