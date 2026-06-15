@@ -7,7 +7,7 @@
   font-weight: 500;
   color: var(--tdf-ink);
   background-color: #fff;
-  border: 2px solid var(--tdf-black);
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   appearance: none;

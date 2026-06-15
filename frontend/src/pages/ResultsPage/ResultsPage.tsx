@@ -82,7 +82,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
                         <span className={styles.resultBarTrack} aria-hidden="true">
                           <span
                             className={styles.resultBar}
-                            style={{ width: `${(result.totalVotes / maxVotes) * 100}%` }}
+                            style={{ width: `${percentage}%` }}
                           />
                         </span>
                       </span>

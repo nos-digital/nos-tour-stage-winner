@@ -28,62 +28,46 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const W = 500, H = 500;
-  const M = 28; // margin
+  const M = 32;
 
-  // ── Yellow gradient background
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#ffe95c');
-  bg.addColorStop(0.55, '#ffd900');
-  bg.addColorStop(1, '#f2c500');
-  ctx.fillStyle = bg;
+  // ── Flat yellow background
+  ctx.fillStyle = '#FEC827';
   ctx.fillRect(0, 0, W, H);
 
-  // ── Speed lines
-  ctx.save();
-  ctx.globalAlpha = 0.22;
-  ctx.fillStyle = '#fff';
-  ctx.translate(W / 2, H / 2);
-  ctx.rotate((-55 * Math.PI) / 180);
-  const diag = Math.sqrt(W * W + H * H);
-  for (let y = -diag; y < diag; y += 44) {
-    ctx.fillRect(-diag, y + 41, diag * 2, 3);
-  }
-  ctx.restore();
-
   // ── Top black bar
-  const BAR_TOP = 42;
+  const BAR_TOP = 56;
   ctx.fillStyle = '#1a1a1a';
   ctx.fillRect(0, 0, W, BAR_TOP);
 
   // ── NOS letters
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `bold 27px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `bold 30px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const nW = ctx.measureText('N').width;
   const oW = ctx.measureText('O').width;
   ctx.fillStyle = '#fff';
-  ctx.fillText('N', M, 31);
+  ctx.fillText('N', M, 39);
   ctx.fillStyle = '#E61E14';
-  ctx.fillText('O', M + nW, 31);
+  ctx.fillText('O', M + nW, 39);
   ctx.fillStyle = '#fff';
-  ctx.fillText('S', M + nW + oW, 31);
+  ctx.fillText('S', M + nW + oW, 39);
 
   // ── "TOUR DE FRANCE 2026"
-  ctx.font = `700 15px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#ffd900';
+  ctx.font = `700 14px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.fillStyle = '#fff';
   ctx.textAlign = 'right';
-  ctx.fillText('Tour De France 2026', W - M, 28);
+  ctx.fillText('TOUR DE FRANCE 2026', W - M, 39);
   ctx.textAlign = 'left';
 
-  // ── Label
-  ctx.font = `600 20px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  // ── "Mijn keuze" label
+  ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#1a1a1a';
-  ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 26);
+  ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 38);
 
   // ── Stage badge
   const stageLabel = `Etappe ${stage.number}  ·  ${stage.start} → ${stage.finish}`;
-  ctx.font = `700 16px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `700 15px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const labelW = Math.min(ctx.measureText(stageLabel).width, W - M * 2);
-  const bPad = 13, bH = 27, bY = BAR_TOP + 34;
+  const bPad = 13, bH = 28, bY = BAR_TOP + 50;
   ctx.fillStyle = '#1a1a1a';
   roundedRect(ctx, M, bY, labelW + bPad * 2, bH, 14);
   ctx.fill();
@@ -97,43 +81,43 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   // ── Rider name: auto-fit to card width
   const maxNameW = W - M * 2;
   const nameText = rider.name;
-  ctx.font = `italic 800 66px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `italic 800 72px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const rawW = ctx.measureText(nameText).width;
   if (rawW > maxNameW) {
-    const fitted = Math.floor(66 * (maxNameW / rawW));
+    const fitted = Math.floor(72 * (maxNameW / rawW));
     ctx.font = `italic 800 ${fitted}px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   }
   ctx.fillStyle = '#1a1a1a';
-  ctx.fillText(nameText, M, 265);
+  ctx.fillText(nameText, M, 295);
 
   // ── Team
-  ctx.font = `500 24px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `500 22px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#444';
-  ctx.fillText(rider.team || '', M, 298);
+  ctx.fillText(rider.team || '', M, 327);
 
   // ── Divider
-  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(M, 316);
-  ctx.lineTo(W - M, 316);
+  ctx.moveTo(M, 350);
+  ctx.lineTo(W - M, 350);
   ctx.stroke();
 
   // ── CTA
-  ctx.font = `600 18px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'center';
-  ctx.fillText('Stem ook mee via nos.nl/tour', W / 2, 344);
+  ctx.fillText('Stem ook mee via nos.nl/tour', W / 2, 378);
   ctx.textAlign = 'left';
 
   // ── Bottom black bar
-  const BAR_BOT = 38;
+  const BAR_BOT = 48;
   ctx.fillStyle = '#1a1a1a';
   ctx.fillRect(0, H - BAR_BOT, W, BAR_BOT);
-  ctx.font = `500 16px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#ffd900';
+  ctx.font = `700 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
+  ctx.fillStyle = '#FEC827';
   ctx.textAlign = 'center';
-  ctx.fillText('nos.nl/tour', W / 2, H - 12);
+  ctx.fillText('nos.nl/tour', W / 2, H - 15);
   ctx.textAlign = 'left';
 }
 
