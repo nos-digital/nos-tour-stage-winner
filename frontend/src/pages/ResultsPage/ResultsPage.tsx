@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Hero } from '../../components/Hero/Hero';
 import { Panel } from '../../components/Panel/Panel';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
+import { ShareVote } from '../../components/ShareVote/ShareVote';
 import { fetchResults, getStoredVote } from '../../api';
 import { Rider, Stage, StageResult } from '../../types';
 import { LoadStatus } from '../../App';
@@ -52,7 +53,8 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
         <Link to="/" className={styles.backLink}>
           &larr; Terug naar stemmen
         </Link>
-        <Panel title="Meest gekozen renners">
+        <div className={votedRider && stage ? styles.columns : undefined}>
+          <Panel title="Meest gekozen renners">
           {(status === 'loading' || (status === 'ready' && !results && !error)) && (
             <p>Laden&hellip;</p>
           )}
@@ -94,7 +96,13 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
               })}
             </ol>
           )}
-        </Panel>
+          </Panel>
+          {votedRider && stage && (
+            <div className={styles.shareColumn}>
+              <ShareVote rider={votedRider} stage={stage} />
+            </div>
+          )}
+        </div>
       </main>
     </>
   );

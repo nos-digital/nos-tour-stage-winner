@@ -1,7 +1,29 @@
 .results {
-  max-width: 720px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 20px 16px 72px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+.shareColumn {
+  position: sticky;
+  top: 24px;
+}
+
+@media (max-width: 768px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .shareColumn {
+    position: static;
+  }
 }
 
 .backLink {
