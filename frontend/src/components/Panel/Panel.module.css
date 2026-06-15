@@ -6,6 +6,12 @@
   box-shadow: 0 10px 30px rgba(26, 26, 26, 0.1);
 }
 
+@media (max-width: 600px) {
+  .panel {
+    padding: 18px 14px;
+  }
+}
+
 .title {
   display: flex;
   align-items: center;
