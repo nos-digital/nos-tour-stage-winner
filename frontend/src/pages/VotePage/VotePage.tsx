@@ -53,7 +53,7 @@ function VotePage({ status, riders, stage }: VotePageProps) {
       <Hero>
         {stage && <StageBanner stage={stage} />}
         <h1>
-          Wie wint <em>vandaag</em> de etappe?
+          Wie wint vandaag de etappe?
         </h1>
         {status === 'loading' && <p className={styles.pickConfirmation}>Laden&hellip;</p>}
         {status === 'error' && (
