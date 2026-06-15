@@ -140,6 +140,13 @@
   letter-spacing: 0.04em;
 }
 
+.adminNosLogo {
+  width: 56px;
+  height: auto;
+  color: #fff;
+  flex-shrink: 0;
+}
+
 .logoutButton {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 0.9rem;

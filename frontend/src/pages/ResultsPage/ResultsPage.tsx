@@ -37,7 +37,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
 
   return (
     <>
-      <Hero compact>
+      <Hero >
         {stage && <StageBanner stage={stage} />}
         <h1>
           De keuze van <em>het publiek</em>

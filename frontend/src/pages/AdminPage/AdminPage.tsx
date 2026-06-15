@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { clearToken } from '../../api/admin';
-import { updateFavorites } from '../../api/admin';
+import { clearToken, updateFavorites, getToken } from '../../api/admin';
 import { fetchStages, fetchRiders } from '../../api';
 import { Rider, Stage } from '../../types';
 import { LoginPage } from './LoginPage';
-import { getToken } from '../../api/admin';
+import { NosLogo } from '../../svg/NosLogo';
 import styles from './AdminPage.module.css';
 
 function AdminPage() {
@@ -98,6 +97,7 @@ function AdminPage() {
       <header className={styles.adminHeader}>
         <div className={styles.adminHeaderInner}>
           <div className={styles.adminHeaderTitle}>
+            <NosLogo className={styles.adminNosLogo} title="NOS" />
             <span className={styles.loginBadge}>Admin</span>
             <span>Tour Favorieten Beheer</span>
           </div>

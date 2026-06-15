@@ -1,14 +1,17 @@
 import React from 'react';
+import { NosLogo } from '../../svg/NosLogo';
 import styles from './Hero.module.css';
 
 interface HeroProps {
-  compact?: boolean;
   children: React.ReactNode;
 }
 
-function Hero({ compact = false, children }: HeroProps) {
+function Hero({ children }: HeroProps) {
   return (
-    <header className={compact ? `${styles.hero} ${styles.compact}` : styles.hero}>
+    <header className={styles.hero}>
+      <div className={styles.nosLogoWrap}>
+        <NosLogo className={styles.nosLogo} title="NOS" />
+      </div>
       <div className={styles.inner}>{children}</div>
     </header>
   );

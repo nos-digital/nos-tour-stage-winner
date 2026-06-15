@@ -9,8 +9,17 @@
   --tdf-muted: #6b6b6b;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
   background: #f5f3ee;
   color: #1a1a1a;
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI',
