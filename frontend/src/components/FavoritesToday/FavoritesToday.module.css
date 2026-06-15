@@ -24,8 +24,7 @@
 }
 
 .rowSelected {
-  background: linear-gradient(90deg, var(--tdf-yellow) 0%, var(--tdf-yellow-light) 100%);
-  border: 2px solid var(--tdf-black);
+  background: var(--tdf-yellow);
   border-radius: 4px;
   margin-bottom: 6px;
 }
