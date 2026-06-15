@@ -1,0 +1,60 @@
+# Hourly Infostrada sync (riders + GC standings).
+#
+# Runs the SAME backend image as the API, but with `node src/sync-once.js`
+# instead of the API entrypoint. The API pods no longer schedule anything —
+# this CronJob is the single writer, so the multi-pod contention on
+# gc_standings (DELETE + re-INSERT) can't happen.
+#
+# Prereqs:
+#   - The backend image pushed to your registry (set `image` below).
+#   - A Secret `tour-backend-secrets` with DB_* and GC_API_* / RIDERS_API_URL
+#     keys (the same creds the API Deployment already consumes).
+#
+# Apply:  kubectl apply -f backend/k8s/cronjob.yaml
+# Trigger manually for testing:
+#   kubectl create job --from=cronjob/tour-infostrada-sync sync-manual-1
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tour-infostrada-sync
+  labels:
+    app: tour
+    component: infostrada-sync
+spec:
+  schedule: "5 * * * *"
+  timeZone: "Europe/Amsterdam"
+  # Never let two syncs overlap — this is what replaces the per-pod cron race.
+  concurrencyPolicy: Forbid
+  # If the controller was down at the scheduled time, only run if we're within
+  # 5 min of it (otherwise skip — stale data isn't worth a thundering herd).
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      # Retry a failed run twice, then give up until the next hour.
+      backoffLimit: 2
+      # Hard cap: kill a run that hangs past 5 minutes (fetch has its own 10s
+      # timeout, so this is a generous backstop).
+      activeDeadlineSeconds: 300
+      template:
+        metadata:
+          labels:
+            app: tour
+            component: infostrada-sync
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: sync
+              image: REGISTRY/tour-backend:latest # <-- set to your pushed image
+              command: ["node", "src/sync-once.js"]
+              envFrom:
+                - secretRef:
+                    name: tour-backend-secrets
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 250m
+                  memory: 128Mi

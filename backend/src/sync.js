@@ -1,4 +1,3 @@
-import cron from 'node-cron';
 import { pool } from './db.js';
 import { cap } from './helpers.js';
 
@@ -69,11 +68,4 @@ export async function syncGc() {
     conn.release();
   }
   console.log(`GC synced: ${data.length} riders`);
-}
-
-export function startSync() {
-  syncRiders().catch((err) => console.error('Initial riders sync failed:', err));
-  syncGc().catch((err) => console.error('Initial GC sync failed:', err));
-  cron.schedule('0 * * * *', () => syncRiders().catch((err) => console.error('Riders sync failed:', err)));
-  cron.schedule('0 * * * *', () => syncGc().catch((err) => console.error('GC sync failed:', err)));
 }

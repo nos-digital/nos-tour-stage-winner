@@ -3,7 +3,6 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { waitForDatabase } from './db.js';
-import { startSync } from './sync.js';
 import ridersRouter from './routes/riders.js';
 import stagesRouter from './routes/stages.js';
 import resultsRouter from './routes/results.js';
@@ -59,5 +58,4 @@ app.use((err, req, res, next) => {
 });
 
 await waitForDatabase();
-startSync();
 app.listen(PORT, () => console.log(`API listening on port ${PORT}`));

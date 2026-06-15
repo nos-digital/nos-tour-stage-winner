@@ -43,5 +43,28 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # One-shot Infostrada sync for local dev. Runs once on `up` and exits.
+  # In production this is a Kubernetes CronJob (see k8s/cronjob.yaml) — same
+  # image, same command, scheduled hourly with concurrencyPolicy: Forbid.
+  sync:
+    build:
+      context: ../
+      dockerfile: backend/Dockerfile
+    container_name: tour-sync
+    command: ["node", "src/sync-once.js"]
+    environment:
+      DB_HOST: database
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      GC_API_URL: ${GC_API_URL}
+      RIDERS_API_URL: ${RIDERS_API_URL}
+      GC_API_USER: ${GC_API_USER}
+      GC_API_PASS: ${GC_API_PASS}
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: "no"
+
 volumes:
   db_data:
