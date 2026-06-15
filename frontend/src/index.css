@@ -1,12 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,700;1,800&family=Barlow:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&display=swap');
+
+@font-face {
+  font-family: 'EffraBold';
+  src: url('https://static.nos.nl/fonts/effra/EffraBold.woff') format('woff');
+  font-weight: bold;
+  font-display: swap;
+}
 
 /* Tour de France design tokens, used by all component modules. */
 :root {
+  /*--tdf-yellow: hotpink;*/
   --tdf-yellow: #ffd900;
+  /*--tdf-yellow-light: pink;*/
   --tdf-yellow-light: #ffe95c;
   --tdf-black: #1a1a1a;
   --tdf-ink: #2b2b2b;
   --tdf-muted: #6b6b6b;
+  --font-heading: 'EffraBold';
 }
 
 *, *::before, *::after {

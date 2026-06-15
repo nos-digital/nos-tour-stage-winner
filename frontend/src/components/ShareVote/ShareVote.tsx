@@ -57,7 +57,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── NOS letters
   ctx.textBaseline = 'alphabetic';
-  ctx.font = `bold 27px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `bold 27px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const nW = ctx.measureText('N').width;
   const oW = ctx.measureText('O').width;
   ctx.fillStyle = '#fff';
@@ -68,20 +68,20 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.fillText('S', M + nW + oW, 31);
 
   // ── "TOUR DE FRANCE 2026"
-  ctx.font = `700 15px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `700 15px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#ffd900';
   ctx.textAlign = 'right';
-  ctx.fillText('TOUR DE FRANCE 2026', W - M, 28);
+  ctx.fillText('Tour De France 2026', W - M, 28);
   ctx.textAlign = 'left';
 
   // ── Label
-  ctx.font = `600 20px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `600 20px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#1a1a1a';
-  ctx.fillText('MIJN KEUZE VOOR DE ETAPPE', M, BAR_TOP + 26);
+  ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 26);
 
   // ── Stage badge
   const stageLabel = `ETAPPE ${stage.number}  ·  ${stage.start} → ${stage.finish}`;
-  ctx.font = `700 16px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `700 16px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const labelW = Math.min(ctx.measureText(stageLabel).width, W - M * 2);
   const bPad = 13, bH = 27, bY = BAR_TOP + 34;
   ctx.fillStyle = '#1a1a1a';
@@ -96,18 +96,18 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── Rider name: auto-fit to card width
   const maxNameW = W - M * 2;
-  const nameText = rider.name.toUpperCase();
-  ctx.font = `italic 800 66px "Barlow Condensed", Impact, Arial, sans-serif`;
+  const nameText = rider.name;
+  ctx.font = `italic 800 66px "EffraBold", Impact, Arial, sans-serif`;
   const rawW = ctx.measureText(nameText).width;
   if (rawW > maxNameW) {
     const fitted = Math.floor(66 * (maxNameW / rawW));
-    ctx.font = `italic 800 ${fitted}px "Barlow Condensed", Impact, Arial, sans-serif`;
+    ctx.font = `italic 800 ${fitted}px "EffraBold", Impact, Arial, sans-serif`;
   }
   ctx.fillStyle = '#1a1a1a';
   ctx.fillText(nameText, M, 265);
 
   // ── Team
-  ctx.font = `500 24px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `500 24px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#444';
   ctx.fillText(rider.team || '', M, 298);
 
@@ -120,7 +120,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.stroke();
 
   // ── CTA
-  ctx.font = `600 18px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `600 18px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#1a1a1a';
   ctx.textAlign = 'center';
   ctx.fillText('Stem ook mee via nos.nl/tour', W / 2, 344);
@@ -130,7 +130,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   const BAR_BOT = 38;
   ctx.fillStyle = '#1a1a1a';
   ctx.fillRect(0, H - BAR_BOT, W, BAR_BOT);
-  ctx.font = `500 16px "Barlow Condensed", "Arial Narrow", Arial, sans-serif`;
+  ctx.font = `500 16px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#ffd900';
   ctx.textAlign = 'center';
   ctx.fillText('nos.nl/tour', W / 2, H - 12);

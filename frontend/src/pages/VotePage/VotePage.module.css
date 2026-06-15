@@ -23,11 +23,9 @@
 
 .voteButton {
   padding: 12px 26px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.2rem;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 1rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--tdf-yellow);
   background: var(--tdf-black);
   border: none;

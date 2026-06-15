@@ -61,7 +61,7 @@
 }
 
 .check {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-heading), sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--tdf-black);

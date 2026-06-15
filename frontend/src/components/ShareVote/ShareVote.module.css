@@ -7,11 +7,9 @@
 }
 
 .label {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-heading), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--tdf-muted);
   margin: 0;
 }
@@ -28,11 +26,9 @@
   width: 100%;
   max-width: 360px;
   padding: 14px;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-heading), sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   background: var(--tdf-black);
   color: var(--tdf-yellow);
   border: none;
