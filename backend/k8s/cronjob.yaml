@@ -21,7 +21,7 @@ metadata:
     app: tour
     component: infostrada-sync
 spec:
-  schedule: "5 * * * *"
+  schedule: "*/5 * * * *"
   timeZone: "Europe/Amsterdam"
   # Never let two syncs overlap — this is what replaces the per-pod cron race.
   concurrencyPolicy: Forbid
