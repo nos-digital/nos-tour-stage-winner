@@ -243,17 +243,20 @@
   min-width: 0;
 }
 
-.stageFinish {
-  font-size: 0.88rem;
+.stageRoute {
+  font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.stageDate {
+.stageMeta {
   font-size: 0.75rem;
   color: var(--tdf-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stageFavCount {
@@ -294,8 +297,14 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  margin: 0;
+  margin: 0 0 4px;
   color: var(--tdf-black);
+}
+
+.editorMeta {
+  font-size: 0.88rem;
+  color: var(--tdf-muted);
+  margin: 0;
 }
 
 /* ── Favorites list ── */

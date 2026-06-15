@@ -118,8 +118,8 @@ function AdminPage() {
             >
               <span className={styles.stageNum}>E{stage.number}</span>
               <span className={styles.stageInfo}>
-                <span className={styles.stageFinish}>{stage.finish}</span>
-                <span className={styles.stageDate}>{stage.date}</span>
+                <span className={styles.stageRoute}>{stage.start} → {stage.finish}</span>
+                <span className={styles.stageMeta}>{stage.distanceKm} km · {stage.stageType}</span>
               </span>
               <span className={styles.stageFavCount}>{(stage.favorites ?? []).length}</span>
             </button>
@@ -134,8 +134,11 @@ function AdminPage() {
             <>
               <div className={styles.editorHeader}>
                 <h2 className={styles.editorTitle}>
-                  Etappe {selectedStage.number} — {selectedStage.finish}
+                  Etappe {selectedStage.number} — {selectedStage.start} → {selectedStage.finish}
                 </h2>
+                <p className={styles.editorMeta}>
+                  {selectedStage.distanceKm} km · {selectedStage.stageType} · {selectedStage.date}
+                </p>
               </div>
 
               <div className={styles.favoritesList}>
