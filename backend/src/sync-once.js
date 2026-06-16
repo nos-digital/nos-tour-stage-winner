@@ -5,11 +5,12 @@
 // It syncs riders + GC standings once, then exits — 0 on success, 1 on failure,
 // so the platform (k8s Job / compose) can report and retry.
 import { waitForDatabase, pool } from './db.js';
-import { syncRiders, syncGc } from './sync.js';
+import { syncStages, syncRiders, syncGc } from './sync.js';
 
 let code = 0;
 try {
   await waitForDatabase();
+  await syncStages();
   await syncRiders();
   await syncGc();
 } catch (err) {
