@@ -21,10 +21,10 @@ services:
   api:
     build:
       context: ../
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     container_name: tour-api
     ports:
-      - "8090:8090"
+      - "3000:3000"
     environment:
       DB_HOST: database
       DB_NAME: ${DB_NAME}
@@ -45,7 +45,7 @@ services:
   sync:
     build:
       context: ../
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     container_name: tour-sync
     command: ["node", "src/sync-once.js"]
     environment:

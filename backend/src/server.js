@@ -1,3 +1,6 @@
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -15,11 +18,18 @@ if (!process.env.JWT_SECRET || !process.env.ADMIN_USERNAME || !process.env.ADMIN
   process.exit(1);
 }
 
-const PORT = Number(process.env.PORT ?? 8090);
+const PORT = Number(process.env.PORT ?? 3000);
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Built frontend, copied into the image by the Dockerfile. Absent in local dev
+// (where CRA serves the frontend on :3000), so static serving is guarded below.
+const publicDir = path.join(__dirname, '..', 'public');
 
 const app = express();
 app.set('trust proxy', 1);
-app.use(helmet());
+// CSP disabled: the frontend loads a cross-origin font (static.nos.nl) and the
+// previous nginx host set no CSP, so this keeps parity without blocking assets.
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin: (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(','),
@@ -42,9 +52,20 @@ app.use('/api/gc', gcRouter);
 app.use('/api/votes', votesRouter);
 app.use('/api/admin', adminRouter);
 
-app.use((req, res) => {
+// Unknown /api routes return JSON; everything else falls through to the SPA.
+app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
+
+// Serve the built frontend and let client-side routing handle the rest.
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir, { maxAge: '1y', index: false }));
+  app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+    res.set('Cache-Control', 'no-cache');
+    res.sendFile(path.join(publicDir, 'index.html'));
+  });
+}
 
 app.use((err, req, res, next) => {
   if (err.type === 'entity.parse.failed' || err.type === 'entity.too.large') {
