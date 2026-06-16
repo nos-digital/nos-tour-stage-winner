@@ -114,16 +114,17 @@ export async function syncGc() {
   try {
     await conn.beginTransaction();
     await conn.execute('DELETE FROM gc_standings');
-    const placeholders = data.map(() => '(?, ?, ?, ?, ?)').join(', ');
+    const placeholders = data.map(() => '(?, ?, ?, ?, ?, ?)').join(', ');
     const values = data.flatMap((r) => [
       r.n_RankSort,
+      r.n_PersonID ?? null,
       cap(r.c_Participant, 100),
       cap(r.c_Team, 100),
       cap(r.c_Result, 20),
       r.n_TimeRel,
     ]);
     await conn.execute(
-      `INSERT INTO gc_standings (\`rank\`, name, team, result, time_gap) VALUES ${placeholders}`,
+      `INSERT INTO gc_standings (\`rank\`, person_id, name, team, result, time_gap) VALUES ${placeholders}`,
       values
     );
     await conn.commit();

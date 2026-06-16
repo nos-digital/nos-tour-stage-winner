@@ -50,6 +50,7 @@ CREATE TABLE votes (
 -- General Classification standings, refreshed hourly by the cron job.
 CREATE TABLE gc_standings (
   `rank` SMALLINT UNSIGNED NOT NULL,
+  person_id INT UNSIGNED NULL,
   name VARCHAR(100) NOT NULL,
   team VARCHAR(100) NOT NULL,
   result VARCHAR(20) NOT NULL,

@@ -23,14 +23,15 @@
   background: #f7f5ef;
 }
 
-.rowSelected {
-  background: var(--tdf-yellow);
+.rowSelected,
+.rowSelected:hover {
+  background: var(--nos-blue);
   border-radius: 4px;
   margin-bottom: 6px;
 }
 
-.rowSelected:hover {
-  background: linear-gradient(90deg, var(--tdf-yellow) 0%, var(--tdf-yellow-light) 100%);
+.rowSelected .name {
+  color: #fff;
 }
 
 .rider {
@@ -57,7 +58,11 @@
 }
 
 .rowSelected .team {
-  color: #5a5200;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.rowSelected .check {
+  color: #fff;
 }
 
 .check {

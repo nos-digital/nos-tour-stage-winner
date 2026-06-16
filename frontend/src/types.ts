@@ -42,4 +42,6 @@ export interface GcEntry {
   result: string;
   /** Time gap to leader in milliseconds; 0 for the leader. */
   timeGap: number;
+  /** Matching rider id (via person_id), so the row can be voted on. Null if unmatched. */
+  riderId: number | null;
 }

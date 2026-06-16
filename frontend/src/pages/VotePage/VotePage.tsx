@@ -120,7 +120,10 @@ function VotePage({ status, riders, stage }: VotePageProps) {
             onSelect={handleSelect}
           />
         )}
-        <GeneralClassification />
+        <GeneralClassification
+          selectedId={selectedId}
+          onSelect={showVoteForm ? handleSelect : undefined}
+        />
       </main>
     </>
   );

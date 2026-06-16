@@ -8,11 +8,17 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  width: 100%;
   padding: 9px 10px;
+  border: none;
   border-bottom: 1px solid #efece4;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
 }
 
-.row:last-child {
+.list li:last-child .row {
   border-bottom: none;
 }
 
@@ -20,6 +26,27 @@
   background: var(--tdf-yellow);
   border-radius: 4px;
   margin-bottom: 6px;
+}
+
+.rowClickable {
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.rowClickable:hover {
+  background: #f7f5ef;
+}
+
+.rowSelected,
+.rowSelected:hover {
+  background: var(--nos-blue);
+}
+
+.rowSelected .rank,
+.rowSelected .name,
+.rowSelected .team,
+.rowSelected .gap {
+  color: #fff !important;
 }
 
 .rank {

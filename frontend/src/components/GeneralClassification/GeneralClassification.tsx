@@ -6,7 +6,12 @@ import styles from './GeneralClassification.module.css';
 
 const INITIAL_COUNT = 10;
 
-function GeneralClassification() {
+interface GeneralClassificationProps {
+  selectedId?: number | null;
+  onSelect?: (id: number) => void;
+}
+
+function GeneralClassification({ selectedId, onSelect }: GeneralClassificationProps) {
   const [entries, setEntries] = useState<GcEntry[] | null>(null);
   const [error, setError] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -26,21 +31,45 @@ function GeneralClassification() {
       {visible && (
         <>
           <ol className={styles.list}>
-            {visible.map((entry) => (
-              <li
-                key={entry.rank}
-                className={entry.rank === 1 ? `${styles.row} ${styles.rowLeader}` : styles.row}
-              >
-                <span className={styles.rank}>{entry.rank}</span>
-                <span className={styles.rider}>
-                  <span className={styles.name}>{entry.name}</span>
-                  <span className={styles.team}>{entry.team}</span>
-                </span>
-                <span className={styles.gap}>
-                  {entry.timeGap === 0 ? 'Gele trui' : entry.result}
-                </span>
-              </li>
-            ))}
+            {visible.map((entry) => {
+              const selectable = !!onSelect && entry.riderId != null;
+              const selected = entry.riderId != null && entry.riderId === selectedId;
+              const className = [
+                styles.row,
+                entry.rank === 1 ? styles.rowLeader : '',
+                selectable ? styles.rowClickable : '',
+                selected ? styles.rowSelected : '',
+              ]
+                .filter(Boolean)
+                .join(' ');
+              const content = (
+                <>
+                  <span className={styles.rank}>{entry.rank}</span>
+                  <span className={styles.rider}>
+                    <span className={styles.name}>{entry.name}</span>
+                    <span className={styles.team}>{entry.team}</span>
+                  </span>
+                  <span className={styles.gap}>
+                    {entry.timeGap === 0 ? 'Gele trui' : entry.result}
+                  </span>
+                </>
+              );
+              return (
+                <li key={entry.rank}>
+                  {selectable ? (
+                    <button
+                      type="button"
+                      className={className}
+                      onClick={() => onSelect!(entry.riderId!)}
+                    >
+                      {content}
+                    </button>
+                  ) : (
+                    <div className={className}>{content}</div>
+                  )}
+                </li>
+              );
+            })}
           </ol>
           {!showAll && entries.length > INITIAL_COUNT && (
             <button className={styles.showAll} onClick={() => setShowAll(true)}>
