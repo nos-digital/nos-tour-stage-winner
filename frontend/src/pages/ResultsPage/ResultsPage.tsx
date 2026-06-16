@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Hero } from '../../components/Hero/Hero';
 import { Panel } from '../../components/Panel/Panel';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
-import { ShareVote, shareVoteCard } from '../../components/ShareVote/ShareVote';
+import { ShareDialog } from '../../components/ShareVote/ShareDialog';
 import { PageView } from '../../components/PageView/PageView';
 import { clickTracking } from '../../components/NosTracker/NosTracker';
 import { fetchResults, getStoredVote } from '../../api';
@@ -22,6 +22,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
   const votedRider = routeVotedRider ?? (stage ? getStoredVote(stage.id) : null);
   const [results, setResults] = useState<StageResult[] | null>(null);
   const [error, setError] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     if (!stage) return;
@@ -55,8 +56,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
         <Link to="/" className={styles.backLink}>
           &larr; Terug naar stemmen
         </Link>
-        <div className={votedRider && stage ? styles.columns : undefined}>
-          <Panel title="Meest gekozen renners">
+        <Panel title="Meest gekozen renners">
           {(status === 'loading' || (status === 'ready' && !results && !error)) && (
             <p>Laden&hellip;</p>
           )}
@@ -90,8 +90,8 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
                         {isVoted && votedRider && stage && (
                           <button
                             className={styles.rowShareButton}
-                            onClick={() => shareVoteCard(votedRider, stage)}
-                            {...clickTracking('Delen')}
+                            onClick={() => setShareOpen(true)}
+                            {...clickTracking('Deel jouw keuze')}
                           >
                             Deel jouw keuze
                           </button>
@@ -107,14 +107,11 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
               })}
             </ol>
           )}
-          </Panel>
-          {votedRider && stage && (
-            <div className={styles.shareColumn}>
-              <ShareVote rider={votedRider} stage={stage} />
-            </div>
-          )}
-        </div>
+        </Panel>
       </main>
+      {shareOpen && votedRider && stage && (
+        <ShareDialog rider={votedRider} stage={stage} onClose={() => setShareOpen(false)} />
+      )}
     </>
   );
 }

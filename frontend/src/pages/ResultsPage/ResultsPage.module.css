@@ -1,29 +1,7 @@
 .results {
-  max-width: 1100px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 20px 16px 72px;
-}
-
-.columns {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 24px;
-  align-items: start;
-}
-
-.shareColumn {
-  position: sticky;
-  top: 24px;
-}
-
-@media (max-width: 768px) {
-  .columns {
-    grid-template-columns: 1fr;
-  }
-
-  .shareColumn {
-    position: static;
-  }
+  padding: 20px 16px 40px;
 }
 
 .backLink {
@@ -74,6 +52,7 @@
   background: var(--tdf-yellow);
   border-radius: 4px;
   margin-bottom: 6px;
+  padding: 14px 16px;
 }
 
 .resultRank {
@@ -110,7 +89,8 @@
   border-radius: 999px;
   cursor: pointer;
   transition: opacity 0.1s ease-in-out;
-  margin: 12px 0 0 0;
+  margin: 6px 0 0 0;
+  width: 100%;
 }
 
 .rowShareButton:hover {
@@ -193,6 +173,10 @@
   .resultRow {
     gap: 10px;
     padding: 8px 12px;
+  }
+
+  .resultRowTop {
+    padding: 12px;
   }
 
   .resultRank {

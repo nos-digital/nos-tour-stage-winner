@@ -1,6 +1,6 @@
 .panel {
   background: #fff;
-  padding: 28px;
+  padding: 20px;
   border-radius: 6px;
   border: 1px solid #e6e2d8;
   box-shadow: 0 10px 30px rgba(26, 26, 26, 0.1);
@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 22px;
+  margin: 0 0 8px;
   font-family: var(--font-heading), sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
