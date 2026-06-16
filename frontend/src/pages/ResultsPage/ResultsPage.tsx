@@ -79,7 +79,12 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
                     <li className={isVoted ? `${styles.resultRow} ${styles.resultRowTop}` : styles.resultRow}>
                       <span className={styles.resultRank}>{rank}</span>
                       <span className={styles.resultInfo}>
-                        <span className={styles.resultName}>{result.riderName}</span>
+                        <span className={styles.resultName}>
+                          {result.riderNumber != null && (
+                            <span className={styles.resultNumber}>{result.riderNumber}</span>
+                          )}
+                          {result.riderName}
+                        </span>
                         <span className={styles.resultTeam}>{result.riderTeam}</span>
                         <span className={styles.resultBarTrack} aria-hidden="true">
                           <span

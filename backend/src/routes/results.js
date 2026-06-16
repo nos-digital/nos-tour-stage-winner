@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 
   const [rows] = await pool.query(
     `SELECT sr.stage_id AS stageId, sr.rider_id AS riderId, r.name AS riderName,
-            r.team AS riderTeam, sr.total_votes AS totalVotes
+            r.team AS riderTeam, r.number AS riderNumber, sr.total_votes AS totalVotes
      FROM stage_results sr
      JOIN riders r ON r.id = sr.rider_id
      ${stageId ? 'WHERE sr.stage_id = ?' : ''}

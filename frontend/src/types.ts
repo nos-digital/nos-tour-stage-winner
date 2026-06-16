@@ -24,6 +24,7 @@ export interface StageResult {
   riderId: number;
   riderName: string;
   riderTeam: string;
+  riderNumber: number | null;
   totalVotes: number;
 }
 

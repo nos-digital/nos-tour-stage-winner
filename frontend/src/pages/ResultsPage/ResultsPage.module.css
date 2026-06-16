@@ -97,6 +97,24 @@
   opacity: 0.9;
 }
 
+.resultNumber {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--tdf-black);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
+
+.resultRowTop .resultNumber {
+  background: #fff;
+  color: var(--tdf-black);
+}
+
 .resultName {
   font-family: var(--font-heading), sans-serif;
   font-size: 1.2rem;
