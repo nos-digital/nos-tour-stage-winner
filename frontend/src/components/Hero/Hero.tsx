@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { NosLogo } from '../../svg/NosLogo';
 import styles from './Hero.module.css';
 
@@ -9,9 +10,9 @@ interface HeroProps {
 function Hero({ children }: HeroProps) {
   return (
     <header className={styles.hero}>
-      <div className={styles.nosLogoWrap}>
+      <Link to="/" className={styles.nosLogoWrap} aria-label="Naar startpagina">
         <NosLogo className={styles.nosLogo} title="NOS" />
-      </div>
+      </Link>
       <div className={styles.inner}>{children}</div>
     </header>
   );

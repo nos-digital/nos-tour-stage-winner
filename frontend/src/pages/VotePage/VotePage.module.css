@@ -14,6 +14,43 @@
   }
 }
 
+.single {
+  max-width: 480px;
+  margin: -28px auto 0;
+  padding: 0 16px 72px;
+  position: relative;
+}
+
+.votedBox {
+  margin: 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.votedText {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--tdf-black);
+}
+
+.changeLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--tdf-black);
+  opacity: 0.7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.changeLink:hover {
+  opacity: 1;
+}
+
 .pickConfirmation {
   min-height: 1.5em;
   margin: 20px 0 0;

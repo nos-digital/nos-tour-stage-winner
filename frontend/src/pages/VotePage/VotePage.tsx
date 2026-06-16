@@ -24,14 +24,20 @@ function VotePage({ status, riders, stage }: VotePageProps) {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [voteStatus, setVoteStatus] = useState<VoteStatus>('idle');
+  const [storedVote, setStoredVote] = useState<Rider | null>(null);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!stage) return;
     const stored = getStoredVote(stage.id);
-    if (stored) setSelectedId(stored.id);
+    setStoredVote(stored);
+    setSelectedId(stored ? stored.id : null);
+    setEditing(false);
   }, [stage?.id]);
 
   const selectedRider = riders.find((r) => r.id === selectedId);
+  // A returning voter sees a "view results" screen unless they choose to edit.
+  const showVoteForm = !storedVote || editing;
 
   const handleSelect = (id: number | null) => {
     setSelectedId(id);
@@ -64,7 +70,7 @@ function VotePage({ status, riders, stage }: VotePageProps) {
             De server is niet bereikbaar. Probeer het later opnieuw.
           </p>
         )}
-        {status === 'ready' && (
+        {status === 'ready' && showVoteForm && (
           <>
             <RiderSelect riders={riders} favorites={stage?.favorites} selectedId={selectedId} onSelect={handleSelect} />
             <div className={styles.pickConfirmation} aria-live="polite">
@@ -83,13 +89,37 @@ function VotePage({ status, riders, stage }: VotePageProps) {
             </div>
           </>
         )}
+        {status === 'ready' && !showVoteForm && (
+          <div className={styles.votedBox} aria-live="polite">
+            <p className={styles.votedText}>
+              Je stemde op <strong>{storedVote!.name}</strong>
+            </p>
+            <button
+              className={styles.voteButton}
+              onClick={() => navigate('/uitslag', { state: { votedRider: storedVote } })}
+              {...clickTracking('Naar uitslag')}
+            >
+              Bekijk de uitslag
+            </button>
+            <button
+              type="button"
+              className={styles.changeLink}
+              onClick={() => setEditing(true)}
+              {...clickTracking('Wijzig stem')}
+            >
+              Toch van gedachten veranderd? Wijzig je keuze
+            </button>
+          </div>
+        )}
       </Hero>
-      <main className={styles.columns}>
-        <FavoritesToday
-          favorites={stage?.favorites ?? []}
-          selectedId={selectedId}
-          onSelect={handleSelect}
-        />
+      <main className={showVoteForm ? styles.columns : styles.single}>
+        {showVoteForm && (
+          <FavoritesToday
+            favorites={stage?.favorites ?? []}
+            selectedId={selectedId}
+            onSelect={handleSelect}
+          />
+        )}
         <GeneralClassification />
       </main>
     </>
