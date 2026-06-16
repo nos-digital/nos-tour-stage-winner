@@ -4,6 +4,7 @@ import { Hero } from '../../components/Hero/Hero';
 import { Panel } from '../../components/Panel/Panel';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
 import { ShareVote } from '../../components/ShareVote/ShareVote';
+import { PageView } from '../../components/PageView/PageView';
 import { fetchResults, getStoredVote } from '../../api';
 import { Rider, Stage, StageResult } from '../../types';
 import { LoadStatus } from '../../App';
@@ -38,6 +39,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
 
   return (
     <>
+      <PageView page="tour-etappewinnaar.uitslag" pageTitle="De keuze van het publiek" />
       <Hero >
         {stage && <StageBanner stage={stage} />}
         <h1>

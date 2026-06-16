@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Rider, Stage } from '../../types';
+import { clickTracking } from '../NosTracker/NosTracker';
 import styles from './ShareVote.module.css';
 
 interface ShareVoteProps {
@@ -177,7 +178,12 @@ function ShareVote({ rider, stage }: ShareVoteProps) {
     <div className={styles.wrap}>
       <p className={styles.label}>Jouw keuze</p>
       <img src={imageUrl} alt={`Mijn keuze: ${rider.name}`} className={styles.preview} />
-      <button className={styles.shareButton} onClick={handleShare} disabled={sharing}>
+      <button
+        className={styles.shareButton}
+        onClick={handleShare}
+        disabled={sharing}
+        {...clickTracking('Delen')}
+      >
         {sharing ? 'Bezig…' : 'Delen'}
       </button>
     </div>

@@ -5,6 +5,8 @@ import { RiderSelect } from '../../components/RiderSelect/RiderSelect';
 import { FavoritesToday } from '../../components/FavoritesToday/FavoritesToday';
 import { GeneralClassification } from '../../components/GeneralClassification/GeneralClassification';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
+import { PageView } from '../../components/PageView/PageView';
+import { clickTracking } from '../../components/NosTracker/NosTracker';
 import { castVote, saveVote, getStoredVote } from '../../api';
 import { Rider, Stage } from '../../types';
 import { LoadStatus } from '../../App';
@@ -50,6 +52,7 @@ function VotePage({ status, riders, stage }: VotePageProps) {
 
   return (
     <>
+      <PageView page="tour-etappewinnaar.stemmen" pageTitle="Wie wint vandaag de etappe?" />
       <Hero>
         {stage && <StageBanner stage={stage} />}
         <h1>
@@ -67,7 +70,11 @@ function VotePage({ status, riders, stage }: VotePageProps) {
             <div className={styles.pickConfirmation} aria-live="polite">
               {!selectedRider && 'Kies je winnaar uit de lijst of klik op een favoriet'}
               {selectedRider && voteStatus === 'idle' && (
-                <button className={styles.voteButton} onClick={handleVote}>
+                <button
+                  className={styles.voteButton}
+                  onClick={handleVote}
+                  {...clickTracking('Stem bevestigen')}
+                >
                   Bevestig keuze: {selectedRider.name}
                 </button>
               )}
