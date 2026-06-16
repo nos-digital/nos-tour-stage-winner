@@ -1,6 +1,6 @@
 .hero {
   background: var(--tdf-yellow);
-  border-bottom: 6px solid var(--tdf-black);
+  border-bottom: 8px solid var(--tdf-yellow-dark);
   padding: 56px 16px 48px;
   text-align: center;
   position: relative;

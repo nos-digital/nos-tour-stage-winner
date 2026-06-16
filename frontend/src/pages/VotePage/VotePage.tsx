@@ -112,7 +112,7 @@ function VotePage({ status, riders, stage }: VotePageProps) {
           </div>
         )}
       </Hero>
-      <main className={showVoteForm ? styles.columns : styles.single}>
+      <main className={styles.single}>
         {showVoteForm && (
           <FavoritesToday
             favorites={stage?.favorites ?? []}

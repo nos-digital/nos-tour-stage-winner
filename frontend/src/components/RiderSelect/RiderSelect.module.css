@@ -7,7 +7,7 @@
   font-weight: 500;
   color: var(--tdf-ink);
   background-color: #fff;
-  border: none;
+  border: 4px solid var(--tdf-yellow-dark);
   border-radius: 4px;
   cursor: pointer;
   appearance: none;
@@ -15,4 +15,9 @@
   background-repeat: no-repeat;
   background-position: right 18px center;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.select:focus-visible {
+  outline-offset: -4px;
+  outline: 1px solid var(--nos-blue);
 }
