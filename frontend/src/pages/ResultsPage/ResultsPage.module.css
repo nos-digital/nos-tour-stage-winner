@@ -66,7 +66,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 8px 10px;
+  padding: 8px 16px;
   border-bottom: 1px solid #efece4;
 }
 
@@ -96,6 +96,25 @@
   gap: 3px;
   flex: 1;
   min-width: 0;
+}
+
+.rowShareButton {
+  align-self: flex-start;
+  padding: 6px 18px;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--nos-blue);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+  margin: 12px 0 0 0;
+}
+
+.rowShareButton:hover {
+  opacity: 0.9;
 }
 
 .resultName {
@@ -173,7 +192,7 @@
 
   .resultRow {
     gap: 10px;
-    padding: 8px 4px;
+    padding: 8px 12px;
   }
 
   .resultRank {

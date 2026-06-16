@@ -122,6 +122,42 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.textAlign = 'left';
 }
 
+// Render the share card to a PNG and trigger the native share sheet (or a
+// download fallback). Reused by the share card and the inline results-row button.
+export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
+  await document.fonts.ready;
+  const canvas = document.createElement('canvas');
+  canvas.width = 500;
+  canvas.height = 500;
+  drawCard(canvas, rider, stage);
+
+  await new Promise<void>((resolve) => {
+    canvas.toBlob(async (blob) => {
+      if (!blob) return resolve();
+      const file = new File([blob], 'mijn-etappekeuze.png', { type: 'image/png' });
+      try {
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `Mijn keuze: ${rider.name}`,
+            text: `Ik kies voor ${rider.name} als winnaar van etappe ${stage.number}! Stem ook mee.`,
+          });
+        } else {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'mijn-etappekeuze.png';
+          a.click();
+          URL.revokeObjectURL(a.href);
+        }
+      } catch {
+        // User dismissed the share sheet — nothing to do.
+      } finally {
+        resolve();
+      }
+    }, 'image/png');
+  });
+}
+
 function ShareVote({ rider, stage }: ShareVoteProps) {
   const [imageUrl, setImageUrl] = useState('');
   const [sharing, setSharing] = useState(false);
@@ -143,30 +179,7 @@ function ShareVote({ rider, stage }: ShareVoteProps) {
     if (sharing) return;
     setSharing(true);
     try {
-      await document.fonts.ready;
-      const canvas = document.createElement('canvas');
-      canvas.width = 500;
-      canvas.height = 500;
-      drawCard(canvas, rider, stage);
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) return;
-        const file = new File([blob], 'mijn-etappekeuze.png', { type: 'image/png' });
-
-        if (navigator.canShare?.({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: `Mijn keuze: ${rider.name}`,
-            text: `Ik kies voor ${rider.name} als winnaar van etappe ${stage.number}! Stem ook mee.`,
-          });
-        } else {
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = 'mijn-etappekeuze.png';
-          a.click();
-          URL.revokeObjectURL(a.href);
-        }
-      }, 'image/png');
+      await shareVoteCard(rider, stage);
     } finally {
       setSharing(false);
     }

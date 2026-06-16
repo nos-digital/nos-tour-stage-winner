@@ -3,8 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Hero } from '../../components/Hero/Hero';
 import { Panel } from '../../components/Panel/Panel';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
-import { ShareVote } from '../../components/ShareVote/ShareVote';
+import { ShareVote, shareVoteCard } from '../../components/ShareVote/ShareVote';
 import { PageView } from '../../components/PageView/PageView';
+import { clickTracking } from '../../components/NosTracker/NosTracker';
 import { fetchResults, getStoredVote } from '../../api';
 import { Rider, Stage, StageResult } from '../../types';
 import { LoadStatus } from '../../App';
@@ -30,7 +31,6 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
   }, [stage?.id]);
 
   const totalVotes = results?.reduce((sum, r) => sum + r.totalVotes, 0) ?? 0;
-  const maxVotes = results?.[0]?.totalVotes ?? 0;
 
   const top10 = results?.slice(0, 10) ?? [];
   const votedResult = votedRider ? results?.find((r) => r.riderId === votedRider.id) : null;
@@ -87,6 +87,15 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
                             style={{ width: `${percentage}%` }}
                           />
                         </span>
+                        {isVoted && votedRider && stage && (
+                          <button
+                            className={styles.rowShareButton}
+                            onClick={() => shareVoteCard(votedRider, stage)}
+                            {...clickTracking('Delen')}
+                          >
+                            Deel jouw keuze
+                          </button>
+                        )}
                       </span>
                       <span className={styles.resultVotes}>
                         {result.totalVotes === 1 ? '1 stem' : `${result.totalVotes} stemmen`}
