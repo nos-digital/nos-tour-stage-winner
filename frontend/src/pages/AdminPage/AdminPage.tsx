@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { clearToken, updateFavorites, getToken } from '../../api/admin';
-import { fetchStages, fetchRiders } from '../../api';
-import { Rider, Stage } from '../../types';
+import { fetchStages, fetchRiders, fetchResults } from '../../api';
+import { Rider, Stage, StageResult } from '../../types';
+import { ResultsList, ResultRow } from '../../components/ResultsList/ResultsList';
 import { LoginPage } from './LoginPage';
 import { NosLogo } from '../../svg/NosLogo';
 import styles from './AdminPage.module.css';
+
+type EditorTab = 'favorites' | 'votes';
 
 function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(!!getToken());
@@ -14,6 +17,9 @@ function AdminPage() {
   const [favorites, setFavorites] = useState<Rider[]>([]);
   const [search, setSearch] = useState('');
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [tab, setTab] = useState<EditorTab>('favorites');
+  const [results, setResults] = useState<StageResult[] | null>(null);
+  const [resultsError, setResultsError] = useState(false);
 
   useEffect(() => {
     if (!loggedIn) return;
@@ -23,12 +29,29 @@ function AdminPage() {
     });
   }, [loggedIn]);
 
+  // Load the full vote tally for the selected stage when the Stemmen tab is open.
+  useEffect(() => {
+    if (tab !== 'votes' || !selectedStage) return;
+    setResults(null);
+    setResultsError(false);
+    fetchResults(selectedStage.id)
+      .then(setResults)
+      .catch(() => setResultsError(true));
+  }, [tab, selectedStage?.id]);
+
   const selectStage = (stage: Stage) => {
     setSelectedStage(stage);
     setFavorites(stage.favorites ?? []);
     setSearch('');
     setSaveStatus('idle');
   };
+
+  const votesTotal = results?.reduce((sum, r) => sum + r.totalVotes, 0) ?? 0;
+  const voteRows: ResultRow[] = (results ?? []).map((result, i) => ({
+    result,
+    rank: i + 1,
+    percentage: votesTotal ? Math.round((result.totalVotes / votesTotal) * 100) : 0,
+  }));
 
   const moveUp = (index: number) => {
     if (index === 0) return;
@@ -141,6 +164,23 @@ function AdminPage() {
                 </p>
               </div>
 
+              <div className={styles.tabs}>
+                <button
+                  className={tab === 'favorites' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+                  onClick={() => setTab('favorites')}
+                >
+                  Favorieten
+                </button>
+                <button
+                  className={tab === 'votes' ? `${styles.tab} ${styles.tabActive}` : styles.tab}
+                  onClick={() => setTab('votes')}
+                >
+                  Stemmen
+                </button>
+              </div>
+
+              {tab === 'favorites' && (
+              <>
               <div className={styles.favoritesList}>
                 {favorites.length === 0 && (
                   <p className={styles.emptyState}>Nog geen favorieten voor deze etappe.</p>
@@ -194,6 +234,28 @@ function AdminPage() {
                 {saveStatus === 'saved' && <span className={styles.saveSuccess}>✓ Opgeslagen</span>}
                 {saveStatus === 'error' && <span className={styles.saveError}>Opslaan mislukt</span>}
               </div>
+              </>
+              )}
+
+              {tab === 'votes' && (
+                <div className={styles.votesView}>
+                  {!results && !resultsError && <p className={styles.placeholder}>Stemmen laden…</p>}
+                  {resultsError && (
+                    <p className={styles.placeholder}>Stemmen konden niet worden geladen.</p>
+                  )}
+                  {results && results.length === 0 && (
+                    <p className={styles.placeholder}>Nog geen stemmen voor deze etappe.</p>
+                  )}
+                  {results && results.length > 0 && (
+                    <>
+                      <p className={styles.votesTotal}>
+                        {votesTotal} {votesTotal === 1 ? 'stem' : 'stemmen'} · {results.length} renners
+                      </p>
+                      <ResultsList rows={voteRows} />
+                    </>
+                  )}
+                </div>
+              )}
             </>
           )}
         </main>

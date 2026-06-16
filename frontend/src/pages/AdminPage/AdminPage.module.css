@@ -288,6 +288,50 @@
   font-size: 1rem;
 }
 
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e8e5de;
+}
+
+.tab {
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--tdf-muted);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--tdf-black);
+}
+
+.tabActive {
+  color: var(--tdf-black);
+  border-bottom-color: var(--nos-blue);
+}
+
+/* ── Votes view ── */
+.votesView {
+  background: #fff;
+  border: 1px solid #e8e5de;
+  border-radius: 8px;
+  padding: 8px 8px 4px;
+}
+
+.votesTotal {
+  margin: 8px 10px 12px;
+  font-size: 0.9rem;
+  color: var(--tdf-muted);
+}
+
 .editorHeader {
   margin-bottom: 16px;
 }

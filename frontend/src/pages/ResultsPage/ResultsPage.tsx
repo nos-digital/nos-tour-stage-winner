@@ -4,6 +4,7 @@ import { Hero } from '../../components/Hero/Hero';
 import { Panel } from '../../components/Panel/Panel';
 import { StageBanner } from '../../components/StageBanner/StageBanner';
 import { ShareDialog } from '../../components/ShareVote/ShareDialog';
+import { ResultsList, ResultRow } from '../../components/ResultsList/ResultsList';
 import { PageView } from '../../components/PageView/PageView';
 import { clickTracking } from '../../components/NosTracker/NosTracker';
 import { fetchResults, getStoredVote } from '../../api';
@@ -38,6 +39,30 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
   const votedInTop10 = votedResult ? top10.some((r) => r.riderId === votedResult.riderId) : true;
   const displayed = votedResult && !votedInTop10 ? [...top10, votedResult] : top10;
 
+  const rows: ResultRow[] = displayed.map((result) => {
+    const isVoted = result.riderId === votedRider?.id;
+    const isExtra = !votedInTop10 && result.riderId === votedResult?.riderId;
+    const rank = (results?.findIndex((r) => r.riderId === result.riderId) ?? -1) + 1;
+    const percentage = totalVotes ? Math.round((result.totalVotes / totalVotes) * 100) : 0;
+    return {
+      result,
+      rank,
+      percentage,
+      highlighted: isVoted,
+      separatorBefore: isExtra,
+      action:
+        isVoted && votedRider && stage ? (
+          <button
+            className={styles.rowShareButton}
+            onClick={() => setShareOpen(true)}
+            {...clickTracking('Deel jouw keuze')}
+          >
+            Deel jouw keuze
+          </button>
+        ) : undefined,
+    };
+  });
+
   return (
     <>
       <PageView page="tour-etappewinnaar.uitslag" pageTitle="De keuze van het publiek" />
@@ -64,54 +89,7 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
             <p>De uitslag kan niet worden geladen. Probeer het later opnieuw.</p>
           )}
           {results && results.length === 0 && <p>Nog geen stemmen voor deze etappe.</p>}
-          {results && results.length > 0 && (
-            <ol className={styles.resultsList}>
-              {displayed.map((result) => {
-                const isVoted = result.riderId === votedRider?.id;
-                const isExtra = !votedInTop10 && result.riderId === votedResult?.riderId;
-                const rank = (results.findIndex((r) => r.riderId === result.riderId) ?? 0) + 1;
-                const percentage = Math.round((result.totalVotes / totalVotes) * 100);
-                return (
-                  <React.Fragment key={result.riderId}>
-                    {isExtra && (
-                      <li className={styles.resultSeparator} aria-hidden="true">&middot;&middot;&middot;</li>
-                    )}
-                    <li className={isVoted ? `${styles.resultRow} ${styles.resultRowTop}` : styles.resultRow}>
-                      <span className={styles.resultRank}>{rank}</span>
-                      <span className={styles.resultInfo}>
-                        <span className={styles.resultName}>
-                          {result.riderNumber != null && (
-                            <span className={styles.resultNumber}>{result.riderNumber}</span>
-                          )}
-                          {result.riderName}
-                        </span>
-                        <span className={styles.resultTeam}>{result.riderTeam}</span>
-                        <span className={styles.resultBarTrack} aria-hidden="true">
-                          <span
-                            className={styles.resultBar}
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </span>
-                        {isVoted && votedRider && stage && (
-                          <button
-                            className={styles.rowShareButton}
-                            onClick={() => setShareOpen(true)}
-                            {...clickTracking('Deel jouw keuze')}
-                          >
-                            Deel jouw keuze
-                          </button>
-                        )}
-                      </span>
-                      <span className={styles.resultVotes}>
-                        {result.totalVotes === 1 ? '1 stem' : `${result.totalVotes} stemmen`}
-                        <span className={styles.resultPercentage}>{percentage}%</span>
-                      </span>
-                    </li>
-                  </React.Fragment>
-                );
-              })}
-            </ol>
-          )}
+          {results && results.length > 0 && <ResultsList rows={rows} />}
         </Panel>
       </main>
       {shareOpen && votedRider && stage && (
