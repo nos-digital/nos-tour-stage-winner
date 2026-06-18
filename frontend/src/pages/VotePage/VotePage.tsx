@@ -58,11 +58,11 @@ function VotePage({ status, riders, stage }: VotePageProps) {
 
   return (
     <>
-      <PageView page="tour-etappewinnaar.stemmen" pageTitle="Wie wint vandaag de etappe?" />
+      <PageView page="tour-etappewinnaar.stemmen" pageTitle="Wie wint de etappe?" />
       <Hero>
         {stage && <StageBanner stage={stage} />}
         <h1>
-          Wie wint vandaag de etappe?
+          {stage ? `Wie wint etappe ${stage.number}?` : 'Wie wint de etappe?'}
         </h1>
         {status === 'loading' && <p className={styles.pickConfirmation}>Laden&hellip;</p>}
         {status === 'error' && (

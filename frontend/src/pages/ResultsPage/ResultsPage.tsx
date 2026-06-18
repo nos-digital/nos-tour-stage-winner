@@ -65,11 +65,11 @@ function ResultsPage({ status, stage }: ResultsPageProps) {
 
   return (
     <>
-      <PageView page="tour-etappewinnaar.uitslag" pageTitle="De keuze van het publiek" />
+      <PageView page="tour-etappewinnaar.uitslag" pageTitle="De voorspelling" />
       <Hero >
         {stage && <StageBanner stage={stage} />}
         <h1>
-          De keuze van het publiek
+          {stage ? `De voorspelling voor etappe ${stage.number}` : 'De voorspelling'}
         </h1>
         {results && (
           <p className={styles.pickConfirmation}>
