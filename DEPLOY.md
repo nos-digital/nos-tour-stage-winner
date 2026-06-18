@@ -17,3 +17,10 @@ docker push default-route-openshift-image-registry.apps.cluster.chp5-prod.npoclo
 # Start a new rollout of the app
 oc -n nos-tour-stage-winner rollout restart deployment/prod-app
 ```
+
+Ofwel
+```
+docker buildx build --platform linux/amd64 \
+-t default-route-openshift-image-registry.apps.cluster.chp5-prod.npocloud.nl/nos-tour-stage-winner/app:main \
+. && docker push default-route-openshift-image-registry.apps.cluster.chp5-prod.npocloud.nl/nos-tour-stage-winner/app:main && oc -n nos-tour-stage-winner rollout restart deployment/prod-app
+```
