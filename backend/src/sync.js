@@ -34,8 +34,10 @@ function parseInfostradaDate(value) {
 
 // Map an Infostrada phase to our editorial stage_type ENUM. Time trials come
 // straight from c_Event; road races ("Wegwedstrijd") are split flat/hilly/
-// mountain by n_RouteProfileType (1/2/3). Returns null on an unrecognised
-// profile so the caller can log and skip rather than insert a wrong type.
+// mountain by n_RouteProfileType (1/2/3). A road race whose profile isn't
+// classified yet (0) falls back to 'vlakke rit' so the stage still shows — a
+// later sync corrects it once Infostrada sets the profile. Returns null only
+// for genuinely non-race phases, which the caller skips.
 function mapStageType(phase) {
   const event = (phase.c_Event ?? '').toLowerCase();
   if (event.includes('ploegentijdrit')) return 'ploegentijdrit';
@@ -44,7 +46,7 @@ function mapStageType(phase) {
     case 1: return 'vlakke rit';
     case 2: return 'heuvelrit';
     case 3: return 'bergrit';
-    default: return null;
+    default: return event.includes('wegwedstrijd') ? 'vlakke rit' : null;
   }
 }
 
@@ -72,15 +74,25 @@ export async function syncStages() {
     // Upsert on the unique `number` key — never DELETE/re-INSERT, or the
     // auto-increment id changes and orphans stage_favorites rows.
     await pool.execute(
-      `INSERT INTO stages (\`number\`, \`date\`, start, finish, distance_km, stage_type, finished)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE \`date\` = VALUES(\`date\`), start = VALUES(start),
+      `INSERT INTO stages (\`number\`, phase_id, \`date\`, start, finish, distance_km, stage_type, started, finished)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE phase_id = VALUES(phase_id), \`date\` = VALUES(\`date\`), start = VALUES(start),
          finish = VALUES(finish), distance_km = VALUES(distance_km), stage_type = VALUES(stage_type),
-         finished = VALUES(finished)`,
-      [number, date, cap(p.c_LocationStart, 100), cap(p.c_LocationFinish, 100), Math.round((p.n_Distance ?? 0) / 1000), type, p.b_Finished ? 1 : 0]
+         started = VALUES(started), finished = VALUES(finished)`,
+      [number, Number(phaseId), date, cap(p.c_LocationStart, 100), cap(p.c_LocationFinish, 100), Math.round((p.n_Distance ?? 0) / 1000), type, p.b_Started ? 1 : 0, p.b_Finished ? 1 : 0]
     );
     synced += 1;
   }
+
+  // Remove stages from any other race (e.g. after switching INFOSTRADA_PHASE_ID).
+  // Keyed on phase_id, not feed membership, so a temporarily truncated feed can
+  // never delete current-race stages (and their votes via FK cascade).
+  const [pruned] = await pool.execute(
+    'DELETE FROM stages WHERE phase_id IS NULL OR phase_id <> ?',
+    [Number(phaseId)]
+  );
+  if (pruned.affectedRows) console.log(`Pruned ${pruned.affectedRows} stages from a previous race`);
+
   console.log(`Stages synced: ${synced} stages`);
 }
 

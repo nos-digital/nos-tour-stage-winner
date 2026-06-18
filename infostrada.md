@@ -5,10 +5,11 @@ Docs: http://nos.api.infostradasports.com/ → Cycling
 
 ## IDs
 
-|      | classificationID | phaseID |
-| ---- | ---------------- | ------- |
-| Giro | 3490908          | 2944498 |
-| Tour | 3490948          | 2944542 |
+|       | classificationID | phaseID |
+|-------| ---------------- | ------- |
+| Giro  | 3490908          | 2944498 |
+| Tour  | 3490948          | 2944542 |
+| Swiss | 3490941          | 2944533 |
 
 In de app: `INFOSTRADA_GC_CLASSIFICATION_ID` en `INFOSTRADA_PHASE_ID` (zie `backend/.env`).
 

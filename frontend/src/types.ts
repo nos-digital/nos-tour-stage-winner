@@ -15,6 +15,8 @@ export interface Stage {
   finish: string;
   distanceKm: number;
   stageType: string;
+  /** True once the stage has started — voting closes (from Infostrada). */
+  started: boolean;
   /** True once the stage has finished (from Infostrada). */
   finished: boolean;
   /** Suggested winners for this stage */

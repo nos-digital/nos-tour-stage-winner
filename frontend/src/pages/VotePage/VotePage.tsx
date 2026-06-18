@@ -36,8 +36,10 @@ function VotePage({ status, riders, stage }: VotePageProps) {
   }, [stage?.id]);
 
   const selectedRider = riders.find((r) => r.id === selectedId);
+  // Once a stage starts, voting closes — the page becomes a "live, view results" screen.
+  const votingClosed = !!stage?.started;
   // A returning voter sees a "view results" screen unless they choose to edit.
-  const showVoteForm = !storedVote || editing;
+  const showVoteForm = !votingClosed && (!storedVote || editing);
 
   const handleSelect = (id: number | null) => {
     setSelectedId(id);
@@ -89,7 +91,23 @@ function VotePage({ status, riders, stage }: VotePageProps) {
             </div>
           </>
         )}
-        {status === 'ready' && !showVoteForm && (
+        {status === 'ready' && votingClosed && (
+          <div className={styles.votedBox} aria-live="polite">
+            <p className={styles.votedText}>
+              {stage?.finished
+                ? 'Deze etappe is afgelopen.'
+                : 'Deze etappe is bezig — stemmen is gesloten.'}
+            </p>
+            <button
+              className={styles.voteButton}
+              onClick={() => navigate('/uitslag', { state: { votedRider: storedVote } })}
+              {...clickTracking('Naar uitslag')}
+            >
+              Bekijk de uitslag
+            </button>
+          </div>
+        )}
+        {status === 'ready' && !votingClosed && !showVoteForm && (
           <div className={styles.votedBox} aria-live="polite">
             <p className={styles.votedText}>
               Je stemde op <strong>{storedVote!.name}</strong>

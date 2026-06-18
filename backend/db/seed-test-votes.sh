@@ -26,7 +26,7 @@ python3 - <<PYEOF | docker exec -i "$DB_CONTAINER" mysql -u "$DB_USER" -p"$DB_PA
 import uuid, random, sys
 count = $COUNT
 stage = $STAGE
-rider_ids = list(range(1, 185))  # adjust if rider count changes
+rider_ids = list(range(1, 50))  # adjust if rider count changes
 for _ in range(count):
     rid = random.choice(rider_ids)
     uid = str(uuid.uuid4())

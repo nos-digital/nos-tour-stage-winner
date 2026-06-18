@@ -16,11 +16,13 @@ CREATE TABLE riders (
 CREATE TABLE stages (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `number` TINYINT UNSIGNED NOT NULL,
+  phase_id INT UNSIGNED NULL,
   `date` DATE NOT NULL,
   start VARCHAR(100) NOT NULL,
   finish VARCHAR(100) NOT NULL,
   distance_km SMALLINT UNSIGNED NOT NULL,
   stage_type ENUM ('vlakke rit', 'heuvelrit', 'bergrit', 'tijdrit', 'ploegentijdrit') NOT NULL,
+  started TINYINT(1) NOT NULL DEFAULT 0,
   finished TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_stages_number (`number`)
