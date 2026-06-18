@@ -106,12 +106,23 @@ export async function syncRiders() {
   if (!data.length) return;
   for (const r of data) {
     await pool.execute(
-      `INSERT INTO riders (person_id, number, name, team, out_of_race)
-       VALUES (?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE person_id = VALUES(person_id), number = VALUES(number), team = VALUES(team), out_of_race = VALUES(out_of_race)`,
-      [r.n_PersonID, r.c_ShirtNr ? parseInt(r.c_ShirtNr, 10) : null, cap(r.c_Person, 100), cap(r.c_Team, 100), r.b_OutOfRace ? 1 : 0]
+      `INSERT INTO riders (person_id, number, name, team, out_of_race, phase_id)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE person_id = VALUES(person_id), number = VALUES(number),
+         team = VALUES(team), out_of_race = VALUES(out_of_race), phase_id = VALUES(phase_id)`,
+      [r.n_PersonID, r.c_ShirtNr ? parseInt(r.c_ShirtNr, 10) : null, cap(r.c_Person, 100), cap(r.c_Team, 100), r.b_OutOfRace ? 1 : 0, Number(phaseId)]
     );
   }
+
+  // Remove riders from any other race (e.g. after switching INFOSTRADA_PHASE_ID).
+  // Keyed on phase_id, so a temporarily truncated participant list can't delete
+  // current-race riders (and their votes via FK cascade).
+  const [pruned] = await pool.execute(
+    'DELETE FROM riders WHERE phase_id IS NULL OR phase_id <> ?',
+    [Number(phaseId)]
+  );
+  if (pruned.affectedRows) console.log(`Pruned ${pruned.affectedRows} riders from a previous race`);
+
   console.log(`Riders synced: ${data.length} riders`);
 }
 
