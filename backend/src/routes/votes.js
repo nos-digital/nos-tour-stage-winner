@@ -2,6 +2,7 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { pool } from '../db.js';
 import { isId, UUID_RE } from '../helpers.js';
+import { invalidateResults } from '../cache.js';
 
 const voteLimiter = rateLimit({
   windowMs: 60_000,
@@ -22,6 +23,9 @@ router.post('/', voteLimiter, async (req, res) => {
      ON DUPLICATE KEY UPDATE rider_id = VALUES(rider_id)`,
     [stageId, riderId, userId]
   );
+  // Drop the cached tally so the voter immediately sees their vote on /results.
+  invalidateResults(stageId);
+  invalidateResults('all');
   res.status(201).json({ ok: true });
 });
 
