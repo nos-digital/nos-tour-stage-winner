@@ -72,11 +72,12 @@ export async function syncStages() {
     // Upsert on the unique `number` key — never DELETE/re-INSERT, or the
     // auto-increment id changes and orphans stage_favorites rows.
     await pool.execute(
-      `INSERT INTO stages (\`number\`, \`date\`, start, finish, distance_km, stage_type)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO stages (\`number\`, \`date\`, start, finish, distance_km, stage_type, finished)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE \`date\` = VALUES(\`date\`), start = VALUES(start),
-         finish = VALUES(finish), distance_km = VALUES(distance_km), stage_type = VALUES(stage_type)`,
-      [number, date, cap(p.c_LocationStart, 100), cap(p.c_LocationFinish, 100), Math.round((p.n_Distance ?? 0) / 1000), type]
+         finish = VALUES(finish), distance_km = VALUES(distance_km), stage_type = VALUES(stage_type),
+         finished = VALUES(finished)`,
+      [number, date, cap(p.c_LocationStart, 100), cap(p.c_LocationFinish, 100), Math.round((p.n_Distance ?? 0) / 1000), type, p.b_Finished ? 1 : 0]
     );
     synced += 1;
   }

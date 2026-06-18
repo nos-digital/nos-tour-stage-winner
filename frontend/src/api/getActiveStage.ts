@@ -7,14 +7,13 @@ export function todayYMD(): string {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
-export function getActiveStage(stages: Stage[], today: string): Stage | null {
+export function getActiveStage(stages: Stage[]): Stage | null {
   if (stages.length === 0) {
     return null;
   }
   const sorted = [...stages].sort((a, b) => a.number - b.number);
-  return (
-    sorted.find((s) => s.date === today) ??
-    sorted.find((s) => s.date > today) ??
-    sorted[sorted.length - 1]
-  );
+  // Active stage = the first one that hasn't finished yet. Once a stage
+  // finishes (Infostrada `b_Finished`, refreshed by the sync) the next one
+  // opens for voting. When the whole race is done, fall back to the last stage.
+  return sorted.find((s) => !s.finished) ?? sorted[sorted.length - 1];
 }

@@ -5,7 +5,7 @@ import { VotePage } from './pages/VotePage/VotePage';
 import { ResultsPage } from './pages/ResultsPage/ResultsPage';
 import { AdminPage } from './pages/AdminPage/AdminPage';
 import { NosTracker } from './components/NosTracker/NosTracker';
-import { fetchRiders, fetchStages, getActiveStage, todayYMD } from './api';
+import { fetchRiders, fetchStages, getActiveStage } from './api';
 import { Rider, Stage } from './types';
 
 export type LoadStatus = 'loading' | 'ready' | 'error';
@@ -19,7 +19,7 @@ function App() {
     Promise.all([fetchRiders(), fetchStages()])
       .then(([loadedRiders, stages]) => {
         setRiders(loadedRiders);
-        setStage(getActiveStage(stages, todayYMD()));
+        setStage(getActiveStage(stages));
         setStatus('ready');
       })
       .catch(() => setStatus('error'));

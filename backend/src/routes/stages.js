@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', cacheFor(60), async (req, res) => {
   const [stages] = await pool.query(
-    'SELECT id, `number`, `date`, start, finish, distance_km AS distanceKm, stage_type AS stageType FROM stages ORDER BY `number`'
+    'SELECT id, `number`, `date`, start, finish, distance_km AS distanceKm, stage_type AS stageType, finished FROM stages ORDER BY `number`'
   );
   const [favorites] = await pool.query(
     `SELECT sf.stage_id AS stageId, r.id, r.number, r.name, r.team
@@ -17,6 +17,7 @@ router.get('/', cacheFor(60), async (req, res) => {
   res.json(
     stages.map((stage) => ({
       ...stage,
+      finished: Boolean(stage.finished),
       favorites: favorites
         .filter((f) => f.stageId === stage.id)
         .map(({ stageId, ...rider }) => rider),
