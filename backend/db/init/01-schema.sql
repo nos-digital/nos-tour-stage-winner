@@ -25,7 +25,6 @@ CREATE TABLE stages (
   UNIQUE KEY uq_stages_number (`number`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
--- Suggested winners per stage, ordered by position.
 CREATE TABLE stage_favorites (
   stage_id INT UNSIGNED NOT NULL,
   rider_id INT UNSIGNED NOT NULL,
@@ -47,7 +46,6 @@ CREATE TABLE votes (
   UNIQUE KEY uq_votes_stage_user (stage_id, user_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
--- General Classification standings, refreshed hourly by the cron job.
 CREATE TABLE gc_standings (
   `rank` SMALLINT UNSIGNED NOT NULL,
   person_id INT UNSIGNED NULL,
@@ -58,7 +56,6 @@ CREATE TABLE gc_standings (
   PRIMARY KEY (`rank`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
--- Aggregated vote counts per (stage, rider) — the only public face of votes.
 CREATE VIEW stage_results AS
 SELECT stage_id, rider_id, COUNT(*) AS total_votes
 FROM votes

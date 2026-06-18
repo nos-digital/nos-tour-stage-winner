@@ -4,7 +4,7 @@ import { cacheFor } from '../helpers.js';
 
 const router = Router();
 
-router.get('/', cacheFor(300), async (req, res) => {
+router.get('/', cacheFor(60), async (req, res) => {
   const [rows] = await pool.query(
     `SELECT g.\`rank\`, g.name, g.team, g.result, g.time_gap AS timeGap, r.id AS riderId
      FROM gc_standings g

@@ -4,7 +4,7 @@ import { cacheFor } from '../helpers.js';
 
 const router = Router();
 
-router.get('/', cacheFor(300), async (req, res) => {
+router.get('/', cacheFor(60), async (req, res) => {
   const [rows] = await pool.query(
     'SELECT id, number, name, team, out_of_race AS outOfRace FROM riders ORDER BY team, number, name'
   );
