@@ -11,7 +11,7 @@ Docs: http://nos.api.infostradasports.com/ → Cycling
 | Tour  | 3490948          | 2944542 |
 | Swiss | 3490941          | 2944533 |
 
-In de app: `INFOSTRADA_GC_CLASSIFICATION_ID` en `INFOSTRADA_PHASE_ID` (zie `backend/.env`).
+In de app: `INFOSTRADA_GC_CLASSIFICATION_ID` en `INFOSTRADA_PHASE_ID` (zie `.env`).
 
 ## Endpoints
 
