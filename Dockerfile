@@ -1,16 +1,18 @@
 # Stage 1: build the frontend (served statically by the API).
-FROM node:22-alpine AS frontend
+FROM node:24.15.0-alpine AS frontend
 WORKDIR /frontend
+COPY .npmrc ./
 COPY /frontend/package.json /frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ .
 RUN npm run build
 
 # Stage 2: API runtime.
-FROM node:22-alpine
+FROM node:24.15.0-alpine
 
 WORKDIR /app
 
+COPY .npmrc ./
 COPY /backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev
 
