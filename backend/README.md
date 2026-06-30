@@ -5,15 +5,18 @@ Express.js REST API with a MariaDB database, both running in Docker.
 
 ## Quick start
 
+The whole stack (API + database) runs from the **repo root** — see the
+[root README](../README.md). In short, from the repo root:
+
 ```sh
-cp .env.example .env   # then set strong random passwords
+[ -f .env ] || cp .env.example .env   # then set strong random passwords (won't clobber existing)
 docker compose up -d --build
 ```
 
-- API: http://localhost:8090/api/
+- API: http://localhost:3000/api/
 - MariaDB is **not** exposed to the host; only the API container can reach it.
   To inspect data: `docker exec -it tour-db mariadb -utour -p tour`
-- Schema + seed (`db/init/*.sql`) run automatically the first time the
+- Schema + seed (`backend/db/init/*.sql`) run automatically the first time the
   database volume is created. To re-seed from scratch:
   `docker compose down -v && docker compose up -d --build`
 

@@ -1,18 +1,18 @@
 services:
   database:
-    image: mysql:8.4
+    image: mariadb:11.4
     container_name: tour-db
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: lekker-onveilig
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
       # Schema + seed run automatically on first startup of an empty volume.
-      - ./db/init:/docker-entrypoint-initdb.d:ro
+      - ./backend/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -20,7 +20,7 @@ services:
 
   api:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile
     container_name: tour-api
     ports:
@@ -40,11 +40,11 @@ services:
     restart: unless-stopped
 
   # One-shot Infostrada sync for local dev. Runs once on `up` and exits.
-  # In production this is a Kubernetes CronJob (see k8s/cronjob.yaml) — same
-  # image, same command, scheduled hourly with concurrencyPolicy: Forbid.
+  # In production this is a Kubernetes CronJob (see backend/k8s/cronjob.yaml) —
+  # same image, same command, scheduled hourly with concurrencyPolicy: Forbid.
   sync:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile
     container_name: tour-sync
     command: ["node", "src/sync-once.js"]

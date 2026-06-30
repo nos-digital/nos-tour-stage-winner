@@ -1,0 +1,8 @@
+# Dev override: run ONLY the database in Docker and expose it to the host so the
+# backend (run locally via `npm run dev`) can reach it. The main compose keeps
+# the database off the host network; this loopback binding applies only when
+# this file is explicitly layered on (see the root package.json "dev:db" script).
+services:
+  database:
+    ports:
+      - "127.0.0.1:3306:3306"
