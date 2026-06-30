@@ -10,13 +10,13 @@
   font-family: var(--font-heading), sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--tdf-black);
+  color: var(--tdf-cream);
   text-decoration: none;
   border-bottom: 3px solid var(--tdf-yellow);
 }
 
 .backLink:hover {
-  border-bottom-color: var(--tdf-black);
+  border-bottom-color: var(--tdf-cream);
 }
 
 .pickConfirmation {
