@@ -17,6 +17,8 @@ COPY /backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev
 
 COPY backend/src ./src
+# Schema/seed SQL, used by src/schema-once.js (and handy for one-off CLI tasks).
+COPY backend/db ./db
 # Built frontend, served by Express from /app/public (see server.js).
 COPY --from=frontend /frontend/build ./public
 

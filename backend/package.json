@@ -7,7 +7,10 @@
     "node": ">=24.15.0"
   },
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "cli:sync": "node src/sync-once.js",
+    "cli:schema": "node src/schema-once.js",
+    "cli:truncate": "node src/truncate-once.js"
   },
   "dependencies": {
     "cors": "2.8.6",
