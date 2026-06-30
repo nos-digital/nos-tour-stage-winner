@@ -15,6 +15,7 @@
   --tdf-black: #141414; /* Macadam */
   --tdf-ink: #383838;   /* Asphalt */
   --tdf-muted: #6b6b6b;
+  --tdf-cream: #f5f3ee; /* light text/surfaces on dark backgrounds */
   --font-heading: 'EffraBold';
   --nos-blue: #284BBE;
 }
@@ -30,7 +31,7 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
-  background: #f5f3ee;
+  background: #141414;
   color: var(--tdf-black);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
