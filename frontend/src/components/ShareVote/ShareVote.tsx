@@ -32,7 +32,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   const M = 32;
 
   // ── Flat yellow background
-  ctx.fillStyle = '#FEC827';
+  ctx.fillStyle = '#FFFF00';
   ctx.fillRect(0, 0, W, H);
 
   // ── Top black bar
@@ -116,7 +116,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.fillStyle = '#1a1a1a';
   ctx.fillRect(0, H - BAR_BOT, W, BAR_BOT);
   ctx.font = `700 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#FEC827';
+  ctx.fillStyle = '#FFFF00';
   ctx.textAlign = 'center';
   ctx.fillText('nos.nl/tour', W / 2, H - 15);
   ctx.textAlign = 'left';

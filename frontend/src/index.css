@@ -7,11 +7,10 @@
 
 /* Tour de France design tokens, used by all component modules. */
 :root {
-  /*--tdf-yellow: hotpink;*/
-  --tdf-yellow: #FEC827;
-  /*--tdf-yellow-light: pink;*/
-  --tdf-yellow-light: #ffe95c;
-  --tdf-yellow-dark: #d5a720;
+  /* NOS brand tour yellow */
+  --tdf-yellow: #FFFF00;
+  --tdf-yellow-light: #ffff66;
+  --tdf-yellow-dark: #cccc00;
   --tdf-black: #1a1a1a;
   --tdf-ink: #2b2b2b;
   --tdf-muted: #6b6b6b;
