@@ -11,9 +11,6 @@ router.get('/', cacheFor(60), async (req, res) => {
      LEFT JOIN riders r ON r.person_id = g.person_id
      ORDER BY g.\`rank\``
   );
-  if (rows.length === 0) {
-    return res.status(503).json({ error: 'GC data not yet available' });
-  }
   res.json(rows);
 });
 

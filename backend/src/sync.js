@@ -57,7 +57,10 @@ export async function syncStages() {
     return;
   }
   const data = await fetchInfostrada('GetStageList', { PhaseId: phaseId });
-  if (!data.length) return;
+  if (!data.length) {
+    console.warn('Stages synced: 0 stages (empty response from Infostrada)');
+    return;
+  }
 
   let synced = 0;
   for (const p of data) {
@@ -103,7 +106,10 @@ export async function syncRiders() {
     return;
   }
   const data = await fetchInfostrada('GetParticipantList', { EventPhaseID: phaseId });
-  if (!data.length) return;
+  if (!data.length) {
+    console.warn('Riders synced: 0 riders (empty response from Infostrada)');
+    return;
+  }
   for (const r of data) {
     await pool.execute(
       `INSERT INTO riders (person_id, number, name, team, out_of_race, phase_id)
@@ -133,7 +139,10 @@ export async function syncGc() {
     return;
   }
   const data = await fetchInfostrada('GetResult', { ClassificationID: classificationId });
-  if (!data.length) return;
+  if (!data.length) {
+    console.warn('GC synced: 0 riders (empty response from Infostrada)');
+    return;
+  }
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();

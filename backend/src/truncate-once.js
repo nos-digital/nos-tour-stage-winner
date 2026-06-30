@@ -48,6 +48,13 @@ try {
       console.log(`Deleted ${result.affectedRows} rows from ${table}`);
     }
     await conn.query('SET FOREIGN_KEY_CHECKS = 1');
+
+    // Verify the wipe: report the remaining row count per table.
+    console.log('\nRemaining rows:');
+    for (const table of TABLES) {
+      const [[{ count }]] = await conn.query(`SELECT COUNT(*) AS count FROM \`${table}\``);
+      console.log(`  ${table}: ${count}`);
+    }
   } finally {
     conn.release();
   }
