@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Rider, Stage } from '../../types';
-import { clickTracking } from '../NosTracker/NosTracker';
-import styles from './ShareVote.module.css';
+import { useEffect, useState } from "react";
+import { Rider, Stage } from "../../types";
+import { clickTracking } from "../NosTracker/NosTracker";
+import styles from "./ShareVote.module.css";
 
 interface ShareVoteProps {
   rider: Rider;
@@ -10,7 +10,11 @@ interface ShareVoteProps {
 
 function roundedRect(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number, r: number
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
 ) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -26,53 +30,56 @@ function roundedRect(
 }
 
 function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   if (!ctx) return;
-  const W = 500, H = 500;
+  const W = 500,
+    H = 500;
   const M = 32;
 
   // ── Flat yellow background
-  ctx.fillStyle = '#FEC827';
+  ctx.fillStyle = "#FEC827";
   ctx.fillRect(0, 0, W, H);
 
   // ── Top black bar
   const BAR_TOP = 56;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = "#1a1a1a";
   ctx.fillRect(0, 0, W, BAR_TOP);
 
   // ── NOS letters
-  ctx.textBaseline = 'alphabetic';
+  ctx.textBaseline = "alphabetic";
   ctx.font = `bold 30px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  const nW = ctx.measureText('N').width;
-  const oW = ctx.measureText('O').width;
-  ctx.fillStyle = '#fff';
-  ctx.fillText('N', M, 39);
-  ctx.fillStyle = '#E61E14';
-  ctx.fillText('O', M + nW, 39);
-  ctx.fillStyle = '#fff';
-  ctx.fillText('S', M + nW + oW, 39);
+  const nW = ctx.measureText("N").width;
+  const oW = ctx.measureText("O").width;
+  ctx.fillStyle = "#fff";
+  ctx.fillText("N", M, 39);
+  ctx.fillStyle = "#E61E14";
+  ctx.fillText("O", M + nW, 39);
+  ctx.fillStyle = "#fff";
+  ctx.fillText("S", M + nW + oW, 39);
 
   // ── "TOUR DE FRANCE 2026"
   ctx.font = `700 14px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'right';
-  ctx.fillText('TOUR DE FRANCE 2026', W - M, 39);
-  ctx.textAlign = 'left';
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "right";
+  ctx.fillText("TOUR DE FRANCE 2026", W - M, 39);
+  ctx.textAlign = "left";
 
   // ── "Mijn keuze" label
   ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#1a1a1a';
-  ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 38);
+  ctx.fillStyle = "#1a1a1a";
+  ctx.fillText("Mijn keuze voor de etappe", M, BAR_TOP + 38);
 
   // ── Stage badge
   const stageLabel = `Etappe ${stage.number}  ·  ${stage.start} → ${stage.finish}`;
   ctx.font = `700 15px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const labelW = Math.min(ctx.measureText(stageLabel).width, W - M * 2);
-  const bPad = 13, bH = 28, bY = BAR_TOP + 50;
-  ctx.fillStyle = '#1a1a1a';
+  const bPad = 13,
+    bH = 28,
+    bY = BAR_TOP + 50;
+  ctx.fillStyle = "#1a1a1a";
   roundedRect(ctx, M, bY, labelW + bPad * 2, bH, 14);
   ctx.fill();
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = "#fff";
   ctx.save();
   ctx.rect(M, bY, labelW + bPad * 2, bH);
   ctx.clip();
@@ -88,16 +95,16 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
     const fitted = Math.floor(72 * (maxNameW / rawW));
     ctx.font = `italic 800 ${fitted}px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   }
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = "#1a1a1a";
   ctx.fillText(nameText, M, 295);
 
   // ── Team
   ctx.font = `500 22px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#444';
-  ctx.fillText(rider.team || '', M, 327);
+  ctx.fillStyle = "#444";
+  ctx.fillText(rider.team || "", M, 327);
 
   // ── Divider
-  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+  ctx.strokeStyle = "rgba(0,0,0,0.2)";
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(M, 350);
@@ -106,27 +113,27 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── CTA
   ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#1a1a1a';
-  ctx.textAlign = 'center';
-  ctx.fillText('Stem ook mee via nos.nl/tour', W / 2, 378);
-  ctx.textAlign = 'left';
+  ctx.fillStyle = "#1a1a1a";
+  ctx.textAlign = "center";
+  ctx.fillText("Stem ook mee via wiewintderit.nos.nl", W / 2, 378);
+  ctx.textAlign = "left";
 
   // ── Bottom black bar
   const BAR_BOT = 48;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = "#1a1a1a";
   ctx.fillRect(0, H - BAR_BOT, W, BAR_BOT);
   ctx.font = `700 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#FEC827';
-  ctx.textAlign = 'center';
-  ctx.fillText('nos.nl/tour', W / 2, H - 15);
-  ctx.textAlign = 'left';
+  ctx.fillStyle = "#FEC827";
+  ctx.textAlign = "center";
+  ctx.fillText("nos.nl/tour", W / 2, H - 15);
+  ctx.textAlign = "left";
 }
 
 // Render the share card to a PNG and trigger the native share sheet (or a
 // download fallback). Reused by the share card and the inline results-row button.
 export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
   await document.fonts.ready;
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = 500;
   canvas.height = 500;
   drawCard(canvas, rider, stage);
@@ -134,7 +141,9 @@ export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
   await new Promise<void>((resolve) => {
     canvas.toBlob(async (blob) => {
       if (!blob) return resolve();
-      const file = new File([blob], 'mijn-etappekeuze.png', { type: 'image/png' });
+      const file = new File([blob], "mijn-etappekeuze.png", {
+        type: "image/png",
+      });
       try {
         if (navigator.canShare?.({ files: [file] })) {
           await navigator.share({
@@ -143,9 +152,9 @@ export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
             text: `Ik kies voor ${rider.name} als winnaar van etappe ${stage.number}! Stem ook mee.`,
           });
         } else {
-          const a = document.createElement('a');
+          const a = document.createElement("a");
           a.href = URL.createObjectURL(blob);
-          a.download = 'mijn-etappekeuze.png';
+          a.download = "mijn-etappekeuze.png";
           a.click();
           URL.revokeObjectURL(a.href);
         }
@@ -154,25 +163,27 @@ export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
       } finally {
         resolve();
       }
-    }, 'image/png');
+    }, "image/png");
   });
 }
 
 function ShareVote({ rider, stage }: ShareVoteProps) {
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState("");
   const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     let active = true;
     document.fonts.ready.then(() => {
       if (!active) return;
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = 500;
       canvas.height = 500;
       drawCard(canvas, rider, stage);
-      if (active) setImageUrl(canvas.toDataURL('image/png'));
+      if (active) setImageUrl(canvas.toDataURL("image/png"));
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [rider.id, stage.id]);
 
   const handleShare = async () => {
@@ -190,14 +201,18 @@ function ShareVote({ rider, stage }: ShareVoteProps) {
   return (
     <div className={styles.wrap}>
       <p className={styles.label}>Jouw keuze</p>
-      <img src={imageUrl} alt={`Mijn keuze: ${rider.name}`} className={styles.preview} />
+      <img
+        src={imageUrl}
+        alt={`Mijn keuze: ${rider.name}`}
+        className={styles.preview}
+      />
       <button
         className={styles.shareButton}
         onClick={handleShare}
         disabled={sharing}
-        {...clickTracking('Delen')}
+        {...clickTracking("Delen")}
       >
-        {sharing ? 'Bezig…' : 'Delen'}
+        {sharing ? "Bezig…" : "Delen"}
       </button>
     </div>
   );
