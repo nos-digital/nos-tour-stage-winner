@@ -37,7 +37,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── Top black bar
   const BAR_TOP = 56;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   ctx.fillRect(0, 0, W, BAR_TOP);
 
   // ── NOS letters
@@ -61,7 +61,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── "Mijn keuze" label
   ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   ctx.fillText('Mijn keuze voor de etappe', M, BAR_TOP + 38);
 
   // ── Stage badge
@@ -69,7 +69,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
   ctx.font = `700 15px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   const labelW = Math.min(ctx.measureText(stageLabel).width, W - M * 2);
   const bPad = 13, bH = 28, bY = BAR_TOP + 50;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   roundedRect(ctx, M, bY, labelW + bPad * 2, bH, 14);
   ctx.fill();
   ctx.fillStyle = '#fff';
@@ -88,7 +88,7 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
     const fitted = Math.floor(72 * (maxNameW / rawW));
     ctx.font = `italic 800 ${fitted}px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   }
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   ctx.fillText(nameText, M, 295);
 
   // ── Team
@@ -106,14 +106,14 @@ function drawCard(canvas: HTMLCanvasElement, rider: Rider, stage: Stage) {
 
   // ── CTA
   ctx.font = `600 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   ctx.textAlign = 'center';
   ctx.fillText('Stem ook mee via nos.nl/tour', W / 2, 378);
   ctx.textAlign = 'left';
 
   // ── Bottom black bar
   const BAR_BOT = 48;
-  ctx.fillStyle = '#1a1a1a';
+  ctx.fillStyle = '#141414';
   ctx.fillRect(0, H - BAR_BOT, W, BAR_BOT);
   ctx.font = `700 17px "EffraBold", "Arial Narrow", Arial, sans-serif`;
   ctx.fillStyle = '#FFFF00';
