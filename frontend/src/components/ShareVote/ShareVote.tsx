@@ -149,7 +149,7 @@ export async function shareVoteCard(rider: Rider, stage: Stage): Promise<void> {
           await navigator.share({
             files: [file],
             title: `Mijn keuze: ${rider.name}`,
-            text: `Ik kies voor ${rider.name} als winnaar van etappe ${stage.number}! Stem ook mee.`,
+            text: `Ik kies voor ${rider.name} als winnaar van etappe ${stage.number}! Stem ook mee via https://wiewintderit.nos.nl`,
           });
         } else {
           const a = document.createElement("a");
