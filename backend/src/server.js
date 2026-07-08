@@ -38,6 +38,10 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: false,
       directives: {
+        // Only frame-ancestors — default-src is explicitly disabled so nothing
+        // else is restricted (keeps parity with the previous no-CSP setup and the
+        // cross-origin font). helmet otherwise errors demanding a default-src.
+        'default-src': helmet.contentSecurityPolicy.dangerouslyDisableDefaultSrc,
         'frame-ancestors': ["'self'", 'https://nos.nl', 'https://*.nos.nl'],
       },
     },
