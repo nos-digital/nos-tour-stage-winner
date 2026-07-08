@@ -50,7 +50,7 @@ function GeneralClassification({ selectedId, onSelect }: GeneralClassificationPr
                     <span className={styles.team}>{entry.team}</span>
                   </span>
                   <span className={styles.gap}>
-                    {entry.timeGap === 0 ? 'Gele trui' : entry.result}
+                    {entry.rank === 1 ? 'Gele trui' : entry.result}
                   </span>
                 </>
               );
