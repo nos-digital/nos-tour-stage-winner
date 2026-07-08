@@ -27,9 +27,22 @@ const publicDir = path.join(__dirname, '..', 'public');
 
 const app = express();
 app.set('trust proxy', 1);
-// CSP disabled: the frontend loads a cross-origin font (static.nos.nl) and the
-// previous nginx host set no CSP, so this keeps parity without blocking assets.
-app.use(helmet({ contentSecurityPolicy: false }));
+// Full CSP stays off: the frontend loads a cross-origin font (static.nos.nl) and
+// the previous nginx host set no CSP, so this keeps parity without blocking assets.
+// We do set a minimal policy with only frame-ancestors so nos.nl can embed us in
+// an iframe. X-Frame-Options can't whitelist a cross-origin parent (only
+// DENY/SAMEORIGIN), so we disable frameguard and rely on frame-ancestors instead.
+app.use(
+  helmet({
+    frameguard: false,
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        'frame-ancestors': ["'self'", 'https://nos.nl', 'https://*.nos.nl'],
+      },
+    },
+  })
+);
 app.use(
   cors({
     origin: (process.env.CORS_ORIGIN ?? 'http://localhost:3000').split(','),
